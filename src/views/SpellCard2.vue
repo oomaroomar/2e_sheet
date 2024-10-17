@@ -1,12 +1,12 @@
 <script setup lang="ts">
-// import wspells from '../json/wizards.json'
-const response = await fetch('../json/wizards.json', {
-  headers: {
-    accept: 'application/json',
-    'User-agent': 'learning app',
-  },
-})
-console.log(response)
+async function getSpells() {
+  const response = await fetch('../json/wizards.json', {
+    headers: {
+      accept: 'application/json',
+      'User-agent': 'learning app',
+    },
+  })
+}
 </script>
 
 <template>
