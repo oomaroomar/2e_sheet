@@ -1,0 +1,22 @@
+query Spells {
+  spells {
+    id
+    level
+    name
+    school
+    class
+    verbal
+    somatic
+    material
+    materials
+    range
+    aoe
+    castingTime
+    duration
+    savingThrow
+    damage
+    description
+    source
+    sphere
+  }
+}

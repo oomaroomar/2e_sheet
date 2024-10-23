@@ -1,18 +1,16 @@
 # quick script to convert json arrays to dictionaries
 import json
 
-f = open('cleric.json')
+f = open('wizard.json')
 wSpells = json.load(f)
+f.close()
 newWSpells = {}
 
 for s in wSpells:
-    key = ''
-    key += s['name']
-    key += s['school']
+    key =  s['school'] + ' - ' + s['name']
     newWSpells[key] = s
-f.close()
 
-new_spells = json.dumps(newWSpells, indent=4)
+with open('wizards.json', 'w') as fp:
+    json.dump(newWSpells, fp, ensure_ascii=True, indent=4)
 
-
-print(new_spells)
+fp.close()
