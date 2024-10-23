@@ -1,12 +1,13 @@
-import { getLocalData } from "../../lib/getData"
-import SpellCard from "@/components/SpellCard"
+"use client"
+import {useHelloQuery} from '@/gql/graphql'
 
-export default async function Page() {
-    const jsonData = await getLocalData()
-    const objectData = JSON.parse(jsonData)
 
-    const stuff = SpellCard()
-    return stuff
+export default function Page() {
 
+    useHelloQuery()
+
+    return <div>
+        hello world
+    </div>
     
 }

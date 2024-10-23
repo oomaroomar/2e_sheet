@@ -1,27 +1,45 @@
-import SpellCard from "@/components/SpellCard";
+"use client"
+// import SpellCard from "@/components/SpellCard";
 import SpellInfo from "@/components/SpellInfo";
+import { Spell } from "@/lib/types";
+import { useMemo, useState } from 'react'
+import { UrqlProvider, ssrExchange, cacheExchange, fetchExchange, createClient } from '@urql/next'
+import SpellList from "@/components/SpellList";
+import Test from '@/components/test'
 
 export default function Home() {
-  const card = SpellCard()
-  const info = SpellInfo()
 
-  const cards = []
-  for (let i = 0; i < 50; i++) {
-    cards.push(card)
+  const [client, ssr] = useMemo(() => {
+    const ssr = ssrExchange({
+      isClient: typeof window !== 'undefined',
+    });
+    const client = createClient({
+      url: 'http://localhost:4000/',
+      exchanges: [cacheExchange, ssr, fetchExchange],
+      // Suspense causes infinity fetching for some reason
+      // suspense: true,
+    });
+    return [client, ssr]
+  }, [])
+
+  const [spellList, setSpellList] = useState<Spell[]>([])
+
+  const inspectSpell = (spell: Spell) => {
+    if(!spellList.includes(spell))
+      setSpellList([spell].concat(spellList))
   }
-  const infos = []
-  for (let i = 0; i < 50; i++) {
-    infos.push(info)
-  }
+
 
   return (
+    <UrqlProvider client={client} ssr={ssr}>
     <div className="w-screen h-lvh flex p-2" >
-      <div className="flex flex-wrap w-3/5 overflow-auto flex-1" >
-        {cards.map(card => card)}
-      </div>
+      {/* <Test/> */}
+      <SpellList inspectSpell={inspectSpell} />
       <div className="flex flex-1 flex-wrap w-2/5 overflow-auto container max-w-3xl p-4 align-self-end" >
-        {infos.map(info => info)}
+        {/* <SpellInfo key={123} spell={wizardSpells[4]} /> */}
+        {spellList.map(spell => <SpellInfo spell={spell} key={spell.id} />)}
       </div>
     </div>
+    </UrqlProvider>
   );
 }
