@@ -28,6 +28,10 @@ const config: Config = {
         Illusion: '#674EA7',
         Necromancy: '#666666',
       },
+      spacing: {
+        '12vh': '12vh',
+        '50%': '50%'
+      }
     },
   },
   plugins: [],

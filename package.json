@@ -12,6 +12,7 @@
   "dependencies": {
     "@apollo/client": "^3.11.8",
     "@urql/next": "^1.1.2",
+    "fuse.js": "^7.0.0",
     "graphql": "^16.9.0",
     "graphql-tag": "^2.12.6",
     "next": "14.2.15",

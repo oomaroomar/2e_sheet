@@ -1,14 +1,15 @@
 import SpellCard from '@/components/SpellCard'
-import { useSpellsQuery } from '@/gql/spells.hooks'
+import { SpellsQuery } from '@/gql/operations'
 import { Spell } from '@/gql/types'
 
 interface SpellListProps {
     inspectSpell: (spell: Spell) => void
+    data: SpellsQuery | undefined
+    fetching: boolean
 }
 
 
-export default function SpellList({inspectSpell}: SpellListProps) {
-    const [{data, fetching}] = useSpellsQuery()
+export default function SpellList({inspectSpell, data, fetching}: SpellListProps) {
 
     if(fetching) return <div>hold</div>
 

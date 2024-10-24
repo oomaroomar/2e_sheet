@@ -1,13 +1,9 @@
 "use client"
-import {useHelloQuery} from '@/gql/graphql'
 
+import SearchModal from "@/components/SearchModal"
 
 export default function Page() {
 
-    useHelloQuery()
-
-    return <div>
-        hello world
-    </div>
+    return <SearchModal/>
     
 }
