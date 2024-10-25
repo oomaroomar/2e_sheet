@@ -21,6 +21,8 @@ export interface Spell {
 
 export type SpellLite = Omit<Spell, "description">
 
+export type Components = 'somatic' | 'material' | 'verbal'
+
 export type school = "Alteration" 
     | "Abjuration" 
     | "Conjuration" 

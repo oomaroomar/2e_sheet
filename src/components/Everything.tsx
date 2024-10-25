@@ -5,7 +5,7 @@ import SearchModal from "./SearchModal"
 import SpellInfo from "./SpellInfo"
 import SpellList from "./SpellList"
 import SpecModal from "./SpecModal"
-import { SpellLite } from "@/lib/types"
+import { Components, SpellLite } from "@/lib/types"
 
 export default function Everything() {
     
@@ -16,6 +16,7 @@ export default function Everything() {
   
 
   const [schoolFilter, setSchoolFilter] = useState<string[]>([])
+  const [cFilter, setComponentsFilter] = useState<Components[]>(['material', 'somatic', 'verbal'])
 
   const [{data, fetching}] = useSpellsQuery()
 
@@ -46,7 +47,7 @@ export default function Everything() {
     }
   }
 
-  const setFilter = (s: string) => {
+  const setSFilter = (s: string) => {
     const i = schoolFilter.findIndex(school => s === school)
     if(i === -1) {
       setSchoolFilter([s].concat(schoolFilter))
@@ -54,16 +55,25 @@ export default function Everything() {
       setSchoolFilter(schoolFilter.toSpliced(i, 1))
     }
   }
+
+  const setCFilter = (c: Components) => {
+    const i = cFilter.findIndex(comp => comp === c)
+    if(i === -1) {
+      setComponentsFilter([c].concat(cFilter))
+    } else {
+      setComponentsFilter(cFilter.toSpliced(i, 1))
+    }
+  }
   
 
   return <div className="h-screen overflow-hidden">
-  <Navbar filter={schoolFilter} setFilter={setFilter} setSpecModalState={() => setSpecModalState(!showSearchModal)}  setSearchModalState={() => setSearchModalState(!showSearchModal)}/>
+  <Navbar setCFilter={setCFilter} cFilter={cFilter} schoolFilter={schoolFilter} setSchoolFilter={setSFilter} setSpecModalState={() => setSpecModalState(!showSearchModal)}  setSearchModalState={() => setSearchModalState(!showSearchModal)}/>
   <div>
   <div className="w-full h-screen flex p-2" >
   <div className="hidden lg:flex flex-1 flex-wrap w-1/3 overflow-auto p-4 pr-20 align-self-end" >
       {spellList.map(id => <SpellInfo spellId={id} key={id} />)}
     </div>
-    <SpellList filter={schoolFilter} blur={showSearchModal || showSpecModal} data={data} fetching={fetching} inspectSpell={inspectSpell} />
+    <SpellList cFilter={cFilter} sFilter={schoolFilter} blur={showSearchModal || showSpecModal} data={data} fetching={fetching} inspectSpell={inspectSpell} />
     {fetching ? '' : <SearchModal inspectSpell={inspectSpell} spells={data!.spells} setModalState={(ns: boolean) => setSearchModalState(ns)} showModal={showSearchModal} key={'search'} />}
     <SpecModal setModalState={setSpecModalState} showModal={showSpecModal} setSchoolFilter={(s: string[]) => setSchoolFilter(s)}  />
   </div>

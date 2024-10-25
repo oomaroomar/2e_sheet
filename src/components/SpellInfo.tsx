@@ -1,7 +1,6 @@
 import { Spell } from "@/lib/types"
 import { useSpellByIdQuery } from "@/gql/spell.hooks"
 
-
 interface SpellInfoProps {
     spellId: number
 }
@@ -11,7 +10,6 @@ export default function SpellInfo({spellId}: SpellInfoProps) {
     const [{data, fetching}] = useSpellByIdQuery({variables: {id: spellId}})
 
     if(fetching) return ''
-
     const spell = data?.spellByID as Spell
 
     return <div className="p-4" >
@@ -20,7 +18,7 @@ export default function SpellInfo({spellId}: SpellInfoProps) {
                 <div className="px-4 py-1" ><b>{`${spell.level})`}</b></div>
                 <div className="col-span-9 px-4 py-1" ><b>{spell.name}</b></div>
             </div>
-            <div className="col-span-2 px-4" > <b>S V M: </b>{spell.materials}</div>
+            <div className="col-span-2 px-4" > <b>{spell.somatic ? 'S ' : ''} {spell.verbal ? 'V ' : ''}{spell.material ? 'M: ' : ''}</b>{spell.materials}</div>
             <div className="px-4" > <b>Damage:</b> {spell.damage}</div>
             <div className="px-4" > <b>Duration:</b> {spell.duration}</div>
             <div className="px-4" > <b>AoE:</b> {spell.aoe}</div>

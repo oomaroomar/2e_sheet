@@ -58,7 +58,7 @@ export default function SpecModal({showModal, setModalState, setSchoolFilter}:Se
 
     if(!showModal) return null
     
-    return <div className="h-screen w-2/3 fixed top-0 left-0 z-40 hidden lg:flex flex-col p-12vh pl-0">
+    return <div className="h-screen w-full fixed top-0 mx-auto left-0 z-40 hidden lg:flex flex-col p-12vh">
         <div ref={modalRef} className="mx-auto max-h-full rounded-lg bg-white my-0 w-full max-w-3xl flex flex-col shadow-2xl shadow-black" >
             <header className="px-4 py-0 relative flex items-center" >
                 <form onSubmit={handleEnter} className="appearance-none flex items-center flex-auto" >
