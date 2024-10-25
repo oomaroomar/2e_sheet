@@ -1,26 +1,36 @@
 import { Spell } from "@/lib/types"
+import { useSpellByIdQuery } from "@/gql/spell.hooks"
+
 
 interface SpellInfoProps {
-    spell: Spell
+    spellId: number
 }
 
-export default function SpellInfo({spell}: SpellInfoProps) {
+export default function SpellInfo({spellId}: SpellInfoProps) {
+
+    const [{data, fetching}] = useSpellByIdQuery({variables: {id: spellId}})
+
+    if(fetching) return ''
+
+    const spell = data?.spellByID as Spell
+
     return <div className="p-4" >
-        <div className="grid grid-cols-2 gap-y-2 bg-white text-black rounded-xl shadow-md" >
+        <div className={`grid grid-cols-2 gap-y-2 bg-white text-black rounded-xl shadow-md shadow-${spell.school}`} >
             <div className={`col-span-2 grid grid-cols-10 bg-${spell.school} rounded-t-xl text-xl`}>
-                <div className="px-2 py-1" ><b>{`${spell.level})`}</b></div>
-                <div className="col-span-9 px-2 py-1" ><b>{spell.name}</b></div>
+                <div className="px-4 py-1" ><b>{`${spell.level})`}</b></div>
+                <div className="col-span-9 px-4 py-1" ><b>{spell.name}</b></div>
             </div>
-            <div className="col-span-2 px-2" > <b>S V M: </b>{spell.materials}</div>
-            <div className="px-2" > <b>Damage:</b> {spell.damage}</div>
-            <div className="px-2" > <b>Duration:</b> {spell.duration}</div>
-            <div className="px-2" > <b>AoE:</b> {spell.aoe}</div>
-            <div className="px-2" > <b>Range:</b>  {spell.range}</div>
-            <div className="px-2" > <b>Casting Time:</b> {spell.castingTime}</div>
-            <div className="px-2" > <b>Save:</b>  {spell.savingThrow}</div>
-            <div className="col-span-2 p-2 pt-0 max-h-72 text-lg overflow-auto" > <b className="text-lg">Description: </b>{spell.description}</div>
-            <div className="px-2 pt-0 pb-2" > <b>School:</b>  {spell.school}</div>
-            <div className="px-2 pt-0 pb-2" > <b>Source:</b>  {spell.source}</div>
+            <div className="col-span-2 px-4" > <b>S V M: </b>{spell.materials}</div>
+            <div className="px-4" > <b>Damage:</b> {spell.damage}</div>
+            <div className="px-4" > <b>Duration:</b> {spell.duration}</div>
+            <div className="px-4" > <b>AoE:</b> {spell.aoe}</div>
+            <div className="px-4" > <b>Range:</b>  {spell.range}</div>
+            <div className="px-4" > <b>Casting Time:</b> {spell.castingTime}</div>
+            <div className="px-4" > <b>Save:</b>  {spell.savingThrow}</div>
+            {/* Get rid of scroll bar by removing max-h-80 and overflow-auto */}
+            <div className="col-span-2 p-2 px-4 pt-0 text-lg max-h-80 overflow-auto" > <b className="text-lg">Description: </b>{spell.description}</div>
+            <div className="px-4 pt-0 pb-2" > <b>School:</b>  {spell.school}</div>
+            <div className="px-4 pt-0 pb-2" > <b>Source:</b>  {spell.source}</div>
         </div>
     </div>
 }

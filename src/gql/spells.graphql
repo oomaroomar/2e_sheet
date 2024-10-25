@@ -15,7 +15,6 @@ query Spells {
     duration
     savingThrow
     damage
-    description
     source
     sphere
   }

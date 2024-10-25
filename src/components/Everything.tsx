@@ -1,28 +1,32 @@
 import { useSpellsQuery } from "@/gql/spells.hooks"
-import { Spell } from "@/gql/types"
 import { useState, useCallback, useEffect } from "react"
 import Navbar from "./NavBar"
 import SearchModal from "./SearchModal"
 import SpellInfo from "./SpellInfo"
 import SpellList from "./SpellList"
+import SpecModal from "./SpecModal"
+import { SpellLite } from "@/lib/types"
 
 export default function Everything() {
     
-  const [spellList, setSpellList] = useState<Spell[]>([])
+  const [spellList, setSpellList] = useState<number[]>([])
 
-  const [showModal, setModalState] = useState<boolean>(false)
+  const [showSearchModal, setSearchModalState] = useState<boolean>(false)
+  const [showSpecModal, setSpecModalState] = useState<boolean>(false)
+  
+
+  const [schoolFilter, setSchoolFilter] = useState<string[]>([])
+
+  const [{data, fetching}] = useSpellsQuery()
 
     const handleKeyPress = useCallback((event: KeyboardEvent) => {
         if(event.ctrlKey === true) {
           if(event.key === 'k') {
             event.preventDefault()
-            setModalState(!showModal)
+            setSearchModalState(!showSearchModal)
           }
         }
-        if(event.key === 'Escape') {
-            setModalState(false)
-        }
-      },[showModal])
+      },[showSearchModal])
 
     useEffect(() => {
         document.addEventListener('keydown', handleKeyPress)
@@ -32,27 +36,37 @@ export default function Everything() {
     },[handleKeyPress])
 
   
-  const inspectSpell = (spell: Spell) => {
-    const i = spellList.findIndex(s => s == spell)
-    if(i == -1) {
-      setSpellList([spell].concat(spellList))
+  const inspectSpell = (spell: SpellLite) => {
+    const i = spellList.findIndex(id => id === spell.id)
+
+    if(i === -1) {
+      setSpellList([spell.id].concat(spellList))
     } else {
-      setSpellList([spell].concat(spellList.toSpliced(i, 1)))
+      setSpellList([spell.id].concat(spellList.toSpliced(i, 1)))
+    }
+  }
+
+  const setFilter = (s: string) => {
+    const i = schoolFilter.findIndex(school => s === school)
+    if(i === -1) {
+      setSchoolFilter([s].concat(schoolFilter))
+    } else {
+      setSchoolFilter(schoolFilter.toSpliced(i, 1))
     }
   }
   
-  const [{data, fetching}] = useSpellsQuery()
 
-  return <div>
-  <Navbar clicky={() => setModalState(!showModal)}/>
-<div>
-<div className="w-full h-lvh flex p-2" >
-  <SpellList data={data} fetching={fetching} inspectSpell={inspectSpell} />
-  {fetching ? '' : <SearchModal spells={data!.spells} setModalState={(ns: boolean) => setModalState(ns)} showModal={showModal} key={'search'} />}
-  <div className="hidden lg:flex flex-1 flex-wrap w-1/6 overflow-auto max-w-3xl p-4 pr-20 align-self-end" >
-    {spellList.map(spell => <SpellInfo spell={spell} key={spell.id} />)}
+  return <div className="h-screen overflow-hidden">
+  <Navbar filter={schoolFilter} setFilter={setFilter} setSpecModalState={() => setSpecModalState(!showSearchModal)}  setSearchModalState={() => setSearchModalState(!showSearchModal)}/>
+  <div>
+  <div className="w-full h-screen flex p-2" >
+  <div className="hidden lg:flex flex-1 flex-wrap w-1/3 overflow-auto p-4 pr-20 align-self-end" >
+      {spellList.map(id => <SpellInfo spellId={id} key={id} />)}
+    </div>
+    <SpellList filter={schoolFilter} blur={showSearchModal || showSpecModal} data={data} fetching={fetching} inspectSpell={inspectSpell} />
+    {fetching ? '' : <SearchModal inspectSpell={inspectSpell} spells={data!.spells} setModalState={(ns: boolean) => setSearchModalState(ns)} showModal={showSearchModal} key={'search'} />}
+    <SpecModal setModalState={setSpecModalState} showModal={showSpecModal} setSchoolFilter={(s: string[]) => setSchoolFilter(s)}  />
   </div>
-</div>
-</div>
-</div>
+  </div>
+  </div>
 }

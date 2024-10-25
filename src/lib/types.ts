@@ -19,12 +19,14 @@ export interface Spell {
     spher?: string
 };
 
+export type SpellLite = Omit<Spell, "description">
+
 export type school = "Alteration" 
     | "Abjuration" 
     | "Conjuration" 
     | "Divination" 
     | "Enchantment" 
-    | "Invocation" 
+    | "Evocation" 
     | "Illusion" 
     | "Necromancy"
 

@@ -7,15 +7,46 @@ export type HelloQueryVariables = Types.Exact<{ [key: string]: never; }>;
 
 export type HelloQuery = { __typename?: 'Query', hello: string };
 
+export type SpellByIdQueryVariables = Types.Exact<{
+  id: Types.Scalars['Int']['input'];
+}>;
+
+
+export type SpellByIdQuery = { __typename?: 'Query', spellByID: { __typename?: 'Spell', id: number, level: number, name: string, school: string, class: string, verbal: boolean, somatic: boolean, material: boolean, materials: string, range: string, aoe: string, castingTime: string, duration: string, savingThrow: string, damage: string, description: string, source: string, sphere?: string | null } };
+
 export type SpellsQueryVariables = Types.Exact<{ [key: string]: never; }>;
 
 
-export type SpellsQuery = { __typename?: 'Query', spells: Array<{ __typename?: 'Spell', id: number, level: number, name: string, school: string, class: string, verbal: boolean, somatic: boolean, material: boolean, materials: string, range: string, aoe: string, castingTime: string, duration: string, savingThrow: string, damage: string, description: string, source: string, sphere?: string | null }> };
+export type SpellsQuery = { __typename?: 'Query', spells: Array<{ __typename?: 'Spell', id: number, level: number, name: string, school: string, class: string, verbal: boolean, somatic: boolean, material: boolean, materials: string, range: string, aoe: string, castingTime: string, duration: string, savingThrow: string, damage: string, source: string, sphere?: string | null }> };
 
 
 export const HelloDocument = gql`
     query Hello {
   hello
+}
+    `;
+export const SpellByIdDocument = gql`
+    query SpellByID($id: Int!) {
+  spellByID(id: $id) {
+    id
+    level
+    name
+    school
+    class
+    verbal
+    somatic
+    material
+    materials
+    range
+    aoe
+    castingTime
+    duration
+    savingThrow
+    damage
+    description
+    source
+    sphere
+  }
 }
     `;
 export const SpellsDocument = gql`
@@ -36,7 +67,6 @@ export const SpellsDocument = gql`
     duration
     savingThrow
     damage
-    description
     source
     sphere
   }

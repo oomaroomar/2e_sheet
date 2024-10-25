@@ -1,23 +1,25 @@
 import Magnifier from "@/svgs/Magnifier"
 import { FormEvent, useCallback, useEffect, useRef, useState } from "react"
 import Fuse from 'fuse.js'
-import SearchResult from "./SearchResult"
-import { SpellLite } from "@/lib/types"
+import { schools, specFilters } from "@/lib/constants"
+import SchoolCard from "./SchoolCard"
+import { school } from "@/lib/types"
+
 
 interface SearchModalProps {
     showModal: boolean
     setModalState: (ns: boolean) => void
-    spells: SpellLite[]
-    inspectSpell: (s: SpellLite) => void
-
+    setSchoolFilter: (schools: string[]) => void
 }
 
-export default function SearchModal({showModal, setModalState, spells, inspectSpell}:SearchModalProps) {
+
+
+export default function SpecModal({showModal, setModalState, setSchoolFilter}:SearchModalProps) {
 
     const modalRef = useRef<HTMLInputElement>(null)
     const [searchPattern, setSearchPattern] = useState<string>('')
 
-    const fuse = new Fuse(spells, {keys: ['name']})
+    const fuse = new Fuse(schools)
 
     const handleKeyPress = useCallback((event: KeyboardEvent) => {
         if(event.key === 'Escape') {
@@ -43,10 +45,16 @@ export default function SearchModal({showModal, setModalState, spells, inspectSp
         }
     }, [showModal, setModalState, handleKeyPress])
 
+    const setFilter = (s: school) => {
+        setSchoolFilter(specFilters[s])
+        setModalState(false)
+    }
+
     const handleEnter = (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault()
-        inspectSpell(fuse.search(searchPattern)[0].item)
+        setFilter(fuse.search(searchPattern)[0].item)
     }
+
 
     if(!showModal) return null
     
@@ -63,7 +71,8 @@ export default function SearchModal({showModal, setModalState, spells, inspectSp
             </header>
             <div className="overflow-auto flex flex-auto px-2" >
                 <div className="longlist w-full pb-6">
-                {fuse.search(searchPattern).map(spell => <SearchResult key={spell.item.id} inspectSpell={inspectSpell} spell={spell.item} />)}
+                {searchPattern === '' ? schools.map(school => <SchoolCard school={school} key={school} setSchoolFilter={setFilter} /> ) 
+                : fuse.search(searchPattern).map(school => <SchoolCard school={school.item} key={school.item} setSchoolFilter={setFilter} /> )}
                 </div>
             </div>
         </div>
