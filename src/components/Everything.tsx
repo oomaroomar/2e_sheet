@@ -5,7 +5,7 @@ import SearchModal from "./SearchModal"
 import SpellInfo from "./SpellInfo"
 import SpellList from "./SpellList"
 import SpecModal from "./SpecModal"
-import { Components, SpellLite } from "@/lib/types"
+import { SpellLite } from "@/lib/types"
 
 export default function Everything() {
     
@@ -14,27 +14,24 @@ export default function Everything() {
   const [showSearchModal, setSearchModalState] = useState<boolean>(false)
   const [showSpecModal, setSpecModalState] = useState<boolean>(false)
   
+  const [{data, fetching}] = useSpellsQuery({variables: {limit: 300, lvlCursor: null, nameCursor: null}})
 
-  const [schoolFilter, setSchoolFilter] = useState<string[]>([])
-  const [cFilter, setComponentsFilter] = useState<Components[]>(['material', 'somatic', 'verbal'])
 
-  const [{data, fetching}] = useSpellsQuery()
-
-    const handleKeyPress = useCallback((event: KeyboardEvent) => {
-        if(event.ctrlKey === true) {
-          if(event.key === 'k') {
-            event.preventDefault()
-            setSearchModalState(!showSearchModal)
-          }
+  const handleKeyPress = useCallback((event: KeyboardEvent) => {
+      if(event.ctrlKey === true) {
+        if(event.key === 'k') {
+          event.preventDefault()
+          setSearchModalState(!showSearchModal)
         }
-      },[showSearchModal])
+      }
+    },[showSearchModal])
 
-    useEffect(() => {
-        document.addEventListener('keydown', handleKeyPress)
-        return () => {
-        document.removeEventListener('keydown', handleKeyPress)
-        }
-    },[handleKeyPress])
+  useEffect(() => {
+      document.addEventListener('keydown', handleKeyPress)
+      return () => {
+      document.removeEventListener('keydown', handleKeyPress)
+      }
+  },[handleKeyPress])
 
   
   const inspectSpell = (spell: SpellLite) => {
@@ -47,35 +44,16 @@ export default function Everything() {
     }
   }
 
-  const setSFilter = (s: string) => {
-    const i = schoolFilter.findIndex(school => s === school)
-    if(i === -1) {
-      setSchoolFilter([s].concat(schoolFilter))
-    } else {
-      setSchoolFilter(schoolFilter.toSpliced(i, 1))
-    }
-  }
-
-  const setCFilter = (c: Components) => {
-    const i = cFilter.findIndex(comp => comp === c)
-    if(i === -1) {
-      setComponentsFilter([c].concat(cFilter))
-    } else {
-      setComponentsFilter(cFilter.toSpliced(i, 1))
-    }
-  }
-  
-
   return <div className="h-screen overflow-hidden">
-  <Navbar setCFilter={setCFilter} cFilter={cFilter} schoolFilter={schoolFilter} setSchoolFilter={setSFilter} setSpecModalState={() => setSpecModalState(!showSearchModal)}  setSearchModalState={() => setSearchModalState(!showSearchModal)}/>
+  <Navbar setSpecModalState={() => setSpecModalState(!showSearchModal)}  setSearchModalState={() => setSearchModalState(!showSearchModal)}/>
   <div>
   <div className="w-full h-screen flex p-2" >
   <div className="hidden lg:flex flex-1 flex-wrap w-1/3 overflow-auto p-4 pr-20 align-self-end" >
       {spellList.map(id => <SpellInfo spellId={id} key={id} />)}
     </div>
-    <SpellList cFilter={cFilter} sFilter={schoolFilter} blur={showSearchModal || showSpecModal} data={data} fetching={fetching} inspectSpell={inspectSpell} />
+    <SpellList blur={showSearchModal || showSpecModal} data={data} fetching={fetching} inspectSpell={inspectSpell} />
     {fetching ? '' : <SearchModal inspectSpell={inspectSpell} spells={data!.spells} setModalState={(ns: boolean) => setSearchModalState(ns)} showModal={showSearchModal} key={'search'} />}
-    <SpecModal setModalState={setSpecModalState} showModal={showSpecModal} setSchoolFilter={(s: string[]) => setSchoolFilter(s)}  />
+    <SpecModal setModalState={setSpecModalState} showModal={showSpecModal}  />
   </div>
   </div>
   </div>

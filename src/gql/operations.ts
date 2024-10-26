@@ -14,7 +14,11 @@ export type SpellByIdQueryVariables = Types.Exact<{
 
 export type SpellByIdQuery = { __typename?: 'Query', spellByID: { __typename?: 'Spell', id: number, level: number, name: string, school: string, class: string, verbal: boolean, somatic: boolean, material: boolean, materials: string, range: string, aoe: string, castingTime: string, duration: string, savingThrow: string, damage: string, description: string, source: string, sphere?: string | null } };
 
-export type SpellsQueryVariables = Types.Exact<{ [key: string]: never; }>;
+export type SpellsQueryVariables = Types.Exact<{
+  nameCursor?: Types.InputMaybe<Types.Scalars['String']['input']>;
+  lvlCursor?: Types.InputMaybe<Types.Scalars['Float']['input']>;
+  limit: Types.Scalars['Float']['input'];
+}>;
 
 
 export type SpellsQuery = { __typename?: 'Query', spells: Array<{ __typename?: 'Spell', id: number, level: number, name: string, school: string, class: string, verbal: boolean, somatic: boolean, material: boolean, materials: string, range: string, aoe: string, castingTime: string, duration: string, savingThrow: string, damage: string, source: string, sphere?: string | null }> };
@@ -50,8 +54,8 @@ export const SpellByIdDocument = gql`
 }
     `;
 export const SpellsDocument = gql`
-    query Spells {
-  spells {
+    query Spells($nameCursor: String, $lvlCursor: Float, $limit: Float!) {
+  spells(nameCursor: $nameCursor, lvlCursor: $lvlCursor, limit: $limit) {
     id
     level
     name

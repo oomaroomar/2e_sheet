@@ -21,16 +21,29 @@ export interface Spell {
 
 export type SpellLite = Omit<Spell, "description">
 
-export type Components = 'somatic' | 'material' | 'verbal'
+export const components = ['material', 'somatic', 'verbal'] as const
+export type Components = typeof components[number]
 
-export type school = "Alteration" 
-    | "Abjuration" 
-    | "Conjuration" 
-    | "Divination" 
-    | "Enchantment" 
-    | "Evocation" 
-    | "Illusion" 
-    | "Necromancy"
+// -1 for non damaging
+// 0 for don't care
+// 1 for damaging
+export const dmgOptions = [-1, 0, 1] as const
+export type DmgOption = typeof dmgOptions[number]
+
+export type School = 'Abjuration' |'Alteration' | 'Conjuration' | 'Divination'
+    |'Enchantment'
+    |'Evocation'
+    |'Illusion'
+    |'Necromancy' | ''
+
+export const schools: Readonly<School[]> = ['Abjuration',
+    'Alteration',
+    'Conjuration',
+    'Divination',
+    'Enchantment',
+    'Evocation',
+    'Illusion',
+    'Necromancy', ''] as const
 
 export type castingClass = "Wizard" | "Cleric"
 

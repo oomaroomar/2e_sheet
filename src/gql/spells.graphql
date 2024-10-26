@@ -1,5 +1,5 @@
-query Spells {
-  spells {
+query Spells($nameCursor: String, $lvlCursor: Float, $limit: Float!) {
+  spells(nameCursor: $nameCursor, lvlCursor: $lvlCursor, limit: $limit) {
     id
     level
     name

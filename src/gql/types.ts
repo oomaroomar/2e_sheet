@@ -50,6 +50,13 @@ export type QuerySpellByIdArgs = {
 };
 
 
+export type QuerySpellsArgs = {
+  limit: Scalars['Float']['input'];
+  lvlCursor?: InputMaybe<Scalars['Float']['input']>;
+  nameCursor?: InputMaybe<Scalars['String']['input']>;
+};
+
+
 export type QuerySpellsByNameArgs = {
   name: Scalars['String']['input'];
 };

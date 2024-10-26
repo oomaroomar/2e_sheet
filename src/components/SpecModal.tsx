@@ -1,23 +1,25 @@
 import Magnifier from "@/svgs/Magnifier"
-import { FormEvent, useCallback, useEffect, useRef, useState } from "react"
+import { FormEvent, useCallback, useEffect, useRef, useState, useContext } from "react"
 import Fuse from 'fuse.js'
-import { schools, specFilters } from "@/lib/constants"
+import { School, schools } from "@/lib/types"
+import { specFilters } from "@/lib/constants"
 import SchoolCard from "./SchoolCard"
-import { school } from "@/lib/types"
+import { FilterContext, FilterContextType } from "@/app/context/FilterContext"
 
 
 interface SearchModalProps {
     showModal: boolean
     setModalState: (ns: boolean) => void
-    setSchoolFilter: (schools: string[]) => void
 }
 
 
 
-export default function SpecModal({showModal, setModalState, setSchoolFilter}:SearchModalProps) {
+export default function SpecModal({showModal, setModalState}:SearchModalProps) {
 
     const modalRef = useRef<HTMLInputElement>(null)
     const [searchPattern, setSearchPattern] = useState<string>('')
+
+    const {sSchools} = useContext(FilterContext) as FilterContextType
 
     const fuse = new Fuse(schools)
 
@@ -45,14 +47,24 @@ export default function SpecModal({showModal, setModalState, setSchoolFilter}:Se
         }
     }, [showModal, setModalState, handleKeyPress])
 
-    const setFilter = (s: school) => {
-        setSchoolFilter(specFilters[s])
-        setModalState(false)
+    // const setFilter = (s: School) => {
+    //     sSchools(specFilters[s])
+    //     setModalState(false)
+    // }
+
+    // const handleEnter = (e: FormEvent<HTMLFormElement>) => {
+    //     e.preventDefault()
+    //     setFilter(fuse.search(searchPattern)[0].item)
+    // }
+
+    const setFilter = (s: School) => {
+        sSchools(specFilters[s])
     }
 
     const handleEnter = (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault()
         setFilter(fuse.search(searchPattern)[0].item)
+        setModalState(false)
     }
 
 
@@ -60,8 +72,8 @@ export default function SpecModal({showModal, setModalState, setSchoolFilter}:Se
     
     return <div className="h-screen w-full fixed top-0 mx-auto left-0 z-40 hidden lg:flex flex-col p-12vh">
         <div ref={modalRef} className="mx-auto max-h-full rounded-lg bg-white my-0 w-full max-w-3xl flex flex-col shadow-2xl shadow-black" >
-            <header className="px-4 py-0 relative flex items-center" >
-                <form onSubmit={handleEnter} className="appearance-none flex items-center flex-auto" >
+            <header onSubmit={handleEnter} className="px-4 py-0 relative flex items-center" >
+                <form className="appearance-none flex items-center flex-auto" >
                     <label><Magnifier/></label>
                     <input onChange={e => setSearchPattern(e.target.value)} autoFocus={true} className="outline-none appearance-none w-full h-14 ml-3 mr-4 flex" type="search" placeholder="Search spells" spellCheck='false' autoCapitalize="false" autoCorrect="false" autoComplete="off" />
                 </form>
@@ -71,8 +83,8 @@ export default function SpecModal({showModal, setModalState, setSchoolFilter}:Se
             </header>
             <div className="overflow-auto flex flex-auto px-2" >
                 <div className="longlist w-full pb-6">
-                {searchPattern === '' ? schools.map(school => <SchoolCard school={school} key={school} setSchoolFilter={setFilter} /> ) 
-                : fuse.search(searchPattern).map(school => <SchoolCard school={school.item} key={school.item} setSchoolFilter={setFilter} /> )}
+                {searchPattern === '' ? schools.map(school => <SchoolCard setFilter={setFilter} school={school} key={school}  /> ) 
+                : fuse.search(searchPattern).map(school => <SchoolCard setFilter={setFilter} school={school.item} key={school.item}  /> )}
                 </div>
             </div>
         </div>

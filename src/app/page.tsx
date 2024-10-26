@@ -3,6 +3,7 @@
 import { useMemo } from 'react'
 import { UrqlProvider, ssrExchange, cacheExchange, fetchExchange, createClient } from '@urql/next'
 import Everything from '@/components/Everything';
+import { FilterProvider } from './context/FilterContext';
 
 
 export default function Home() {
@@ -23,7 +24,9 @@ export default function Home() {
 
   return (
     <UrqlProvider client={client} ssr={ssr}>
-      <Everything />
+      <FilterProvider>
+        <Everything />
+      </FilterProvider>
     </UrqlProvider>
   );
 }
