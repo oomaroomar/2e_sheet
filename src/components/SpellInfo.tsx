@@ -1,5 +1,6 @@
+import { useSpellByIdQuery } from "@/gql/graphql"
 import { Spell } from "@/lib/types"
-import { useSpellByIdQuery } from "@/gql/spell.hooks"
+
 
 interface SpellInfoProps {
     spellId: number
@@ -7,9 +8,9 @@ interface SpellInfoProps {
 
 export default function SpellInfo({spellId}: SpellInfoProps) {
 
-    const [{data, fetching}] = useSpellByIdQuery({variables: {id: spellId}})
+    const {data, loading} = useSpellByIdQuery({variables: {id: spellId}})
 
-    if(fetching) return ''
+    if(loading) return ''
     const spell = data?.spellByID as Spell
 
     return <div className="p-4" >

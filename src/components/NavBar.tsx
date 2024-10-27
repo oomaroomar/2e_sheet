@@ -9,7 +9,6 @@ interface NavBarProps {
 
 export default function Navbar({setSearchModalState, setSpecModalState}: NavBarProps) {
     const filters = useContext(FilterContext) as FilterContextType
-    console.log(filters)
 
     return <div className="hidden z-50 w-100% lg:flex flex-row gap-2 border-b border-slate-900/10 p-2" >
         {/* <Burger h='24px' /> */}

@@ -1,5 +1,4 @@
 import SpellCard from '@/components/SpellCard'
-import { SpellsQuery } from '@/gql/operations'
 import { SpellLite } from '@/lib/types'
 import { useContext } from "react"
 import { FilterContext, FilterContextType } from "@/app/context/FilterContext"
@@ -7,7 +6,7 @@ import { FilterContext, FilterContextType } from "@/app/context/FilterContext"
 
 interface SpellListProps {
     inspectSpell: (spell: SpellLite) => void
-    data: SpellsQuery | undefined
+    data: SpellLite[]
     fetching: boolean
     blur: boolean
 }
@@ -28,7 +27,7 @@ export default function SpellList({inspectSpell, data, fetching, blur}: SpellLis
     if(fetching) return <div>hold</div>
 
     return <div className={`flex flex-wrap w-3/5 overflow-auto flex-1 ${blur ? 'blur-sm' : ''}`} >
-        {data?.spells.map(spell => (filter.schools as string[]).includes(spell.school) ? '' : <SpellCard key={spell.id} spell={spell} inspectSpell={inspectSpell} />)} 
+        {data.map(spell => (filter.schools as string[]).includes(spell.school) ? '' : <SpellCard key={spell.id} spell={spell} inspectSpell={inspectSpell} />)} 
     </div>
 
 }
