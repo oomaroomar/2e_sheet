@@ -88,7 +88,7 @@ export type Spell = {
   school: Scalars['String']['output'];
   somatic: Scalars['Boolean']['output'];
   source: Scalars['String']['output'];
-  sphere?: Maybe<Scalars['String']['output']>;
+  spheres?: Maybe<Array<Scalars['String']['output']>>;
   verbal: Scalars['Boolean']['output'];
 };
 
@@ -108,7 +108,7 @@ export type SpellInput = {
   school: Scalars['String']['input'];
   somatic: Scalars['Boolean']['input'];
   source: Scalars['String']['input'];
-  sphere?: InputMaybe<Scalars['String']['input']>;
+  spheres?: InputMaybe<Array<Scalars['String']['input']>>;
   verbal: Scalars['Boolean']['input'];
 };
 
@@ -122,7 +122,7 @@ export type SpellByIdQueryVariables = Exact<{
 }>;
 
 
-export type SpellByIdQuery = { __typename?: 'Query', spellByID: { __typename?: 'Spell', id: number, level: number, name: string, school: string, class: string, verbal: boolean, somatic: boolean, material: boolean, materials: string, range: string, aoe: string, castingTime: string, duration: string, savingThrow: string, damage: string, description: string, source: string, sphere?: string | null } };
+export type SpellByIdQuery = { __typename?: 'Query', spellByID: { __typename?: 'Spell', id: number, level: number, name: string, school: string, class: string, verbal: boolean, somatic: boolean, material: boolean, materials: string, range: string, aoe: string, castingTime: string, duration: string, savingThrow: string, damage: string, description: string, source: string, spheres?: Array<string> | null } };
 
 export type SpellsQueryVariables = Exact<{
   nameCursor?: InputMaybe<Scalars['String']['input']>;
@@ -131,7 +131,7 @@ export type SpellsQueryVariables = Exact<{
 }>;
 
 
-export type SpellsQuery = { __typename?: 'Query', spells: { __typename?: 'PaginatedSpells', hasMore: boolean, spells: Array<{ __typename?: 'Spell', id: number, level: number, name: string, school: string, class: string, verbal: boolean, somatic: boolean, material: boolean, materials: string, range: string, aoe: string, castingTime: string, duration: string, savingThrow: string, damage: string, source: string, sphere?: string | null }> } };
+export type SpellsQuery = { __typename?: 'Query', spells: { __typename?: 'PaginatedSpells', hasMore: boolean, spells: Array<{ __typename?: 'Spell', id: number, level: number, name: string, school: string, class: string, verbal: boolean, somatic: boolean, material: boolean, materials: string, range: string, aoe: string, castingTime: string, duration: string, savingThrow: string, damage: string, source: string, spheres?: Array<string> | null }> } };
 
 
 export const HelloDocument = gql`
@@ -191,7 +191,7 @@ export const SpellByIdDocument = gql`
     damage
     description
     source
-    sphere
+    spheres
   }
 }
     `;
@@ -249,7 +249,7 @@ export const SpellsDocument = gql`
       savingThrow
       damage
       source
-      sphere
+      spheres
     }
   }
 }

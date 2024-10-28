@@ -12,8 +12,6 @@ interface SearchModalProps {
     setModalState: (ns: boolean) => void
 }
 
-
-
 export default function SpecModal({showModal, setModalState}:SearchModalProps) {
 
     const modalRef = useRef<HTMLInputElement>(null)
@@ -46,16 +44,6 @@ export default function SpecModal({showModal, setModalState}:SearchModalProps) {
             document.removeEventListener('keydown', handleKeyPress)
         }
     }, [showModal, setModalState, handleKeyPress])
-
-    // const setFilter = (s: School) => {
-    //     sSchools(specFilters[s])
-    //     setModalState(false)
-    // }
-
-    // const handleEnter = (e: FormEvent<HTMLFormElement>) => {
-    //     e.preventDefault()
-    //     setFilter(fuse.search(searchPattern)[0].item)
-    // }
 
     const setFilter = (s: School) => {
         sSchools(specFilters[s])

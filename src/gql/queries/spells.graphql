@@ -18,7 +18,7 @@ query Spells($nameCursor: String, $lvlCursor: Float, $limit: Float!) {
       savingThrow
       damage
       source
-      sphere
+      spheres
     }
   }
 }

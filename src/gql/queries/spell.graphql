@@ -17,6 +17,6 @@ query SpellByID($id: Int!) {
         damage
         description
         source
-        sphere
+        spheres
   }
 }

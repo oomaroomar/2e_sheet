@@ -16,7 +16,7 @@ export interface Spell {
     damage: string,
     description: string; 
     source: string
-    spher?: string
+    spheres?: string[] | null
 };
 
 export type SpellLite = Omit<Spell, "description">

@@ -1,10 +1,11 @@
 import Magnifier from "@/svgs/Magnifier"
-import { FormEvent, useCallback, useEffect, useRef, useState } from "react"
+import { FormEvent, useCallback, useContext, useEffect, useRef, useState } from "react"
 import Fuse from 'fuse.js'
 import SearchResult from "./SearchResult"
-import { SpellLite } from "@/lib/types"
+import { Spell, SpellLite } from "@/lib/types"
 import { SpellsDocument, SpellsQuery } from "@/gql/graphql"
 import { apolloCache } from "@/app/page"
+import { FilterContext, FilterContextType } from "@/app/context/FilterContext"
 
 interface SearchModalProps {
     showModal: boolean
@@ -17,6 +18,8 @@ export default function SearchModal({showModal, setModalState, inspectSpell}:Sea
 
     const modalRef = useRef<HTMLInputElement>(null)
     const [searchPattern, setSearchPattern] = useState<string>('')
+    const filters = useContext(FilterContext) as FilterContextType
+
 
     const spellsQuery = apolloCache.readQuery({
         query: SpellsDocument,
@@ -55,6 +58,7 @@ export default function SearchModal({showModal, setModalState, inspectSpell}:Sea
     if(!showModal || spellsQuery === null) return null
 
     const spells = spellsQuery.spells.spells
+    filters.runFilters(spells[0] as Spell)
 
     const fuse = new Fuse(spells, {keys: ['name']})
 

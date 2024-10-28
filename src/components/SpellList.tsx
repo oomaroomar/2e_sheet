@@ -33,7 +33,6 @@ export default function SpellList({inspectSpell, blur}: SpellListProps) {
         }
     },[done, setDone, fetchMore, startTransition, data, loading])
 
-
     if(loading) return <div>loading</div>
 
     
