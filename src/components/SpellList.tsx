@@ -1,33 +1,45 @@
 import SpellCard from '@/components/SpellCard'
 import { SpellLite } from '@/lib/types'
-import { useContext } from "react"
+import { useContext, useTransition, useState, useEffect } from "react"
 import { FilterContext, FilterContextType } from "@/app/context/FilterContext"
+import { useSpellsQuery } from '@/gql/graphql'
 
 
 interface SpellListProps {
     inspectSpell: (spell: SpellLite) => void
-    data: SpellLite[]
-    fetching: boolean
     blur: boolean
 }
 
-
-
-export default function SpellList({inspectSpell, data, fetching, blur}: SpellListProps) {
-
+export default function SpellList({inspectSpell, blur}: SpellListProps) {
+    const [, startTransition] = useTransition()
+    const [done, setDone] = useState<boolean>(false)
     const filter = useContext(FilterContext) as FilterContextType
+    const {data, fetchMore, loading} = useSpellsQuery({variables: {limit: 100, lvlCursor: null, nameCursor: null}})
 
-    // const validComponents = (s: boolean, v:boolean, m: boolean): boolean => {
-    //     if(s && !cFilter.includes('somatic')) return false
-    //     if(v && !cFilter.includes('verbal')) return false
-    //     if(m && !cFilter.includes('material')) return false
-    //     return true
-    // }
+    // most retarded pagination known to man but unironically works here maybe once apollo fixes their networkStatus thing
+    // (or i learn to use it) i'll change to something more sophisticated
+    useEffect(() => {
+        if(!loading && !done) {
+            setDone(true)
+            startTransition(() => {
+                fetchMore({
+                    variables: {
+                        limit: 254740991, // some big number that isn't too big to destroy everything
+                        lvlCursor: data!.spells.spells[data!.spells.spells.length-1].level,
+                        nameCursor: data!.spells.spells[data!.spells.spells.length-1].name
+                    }
+                })
+            })
+        }
+    },[done, setDone, fetchMore, startTransition, data, loading])
 
-    if(fetching) return <div>hold</div>
 
+    if(loading) return <div>loading</div>
+
+    
+   
     return <div className={`flex flex-wrap w-3/5 overflow-auto flex-1 ${blur ? 'blur-sm' : ''}`} >
-        {data.map(spell => (filter.schools as string[]).includes(spell.school) ? '' : <SpellCard key={spell.id} spell={spell} inspectSpell={inspectSpell} />)} 
+        {data!.spells.spells.map(spell => (filter.schools as string[]).includes(spell.school) ? '' : <SpellCard key={spell.id} spell={spell} inspectSpell={inspectSpell} />)} 
     </div>
 
 }

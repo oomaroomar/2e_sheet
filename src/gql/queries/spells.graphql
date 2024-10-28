@@ -1,21 +1,24 @@
 query Spells($nameCursor: String, $lvlCursor: Float, $limit: Float!) {
   spells(nameCursor: $nameCursor, lvlCursor: $lvlCursor, limit: $limit) {
-    id
-    level
-    name
-    school
-    class
-    verbal
-    somatic
-    material
-    materials
-    range
-    aoe
-    castingTime
-    duration
-    savingThrow
-    damage
-    source
-    sphere
+    hasMore
+    spells {
+      id
+      level
+      name
+      school
+      class
+      verbal
+      somatic
+      material
+      materials
+      range
+      aoe
+      castingTime
+      duration
+      savingThrow
+      damage
+      source
+      sphere
+    }
   }
 }

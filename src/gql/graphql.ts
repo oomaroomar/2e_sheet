@@ -39,11 +39,17 @@ export type MutationDeleteSpellArgs = {
   id: Scalars['Float']['input'];
 };
 
+export type PaginatedSpells = {
+  __typename?: 'PaginatedSpells';
+  hasMore: Scalars['Boolean']['output'];
+  spells: Array<Spell>;
+};
+
 export type Query = {
   __typename?: 'Query';
   hello: Scalars['String']['output'];
   spellByID: Spell;
-  spells: Array<Spell>;
+  spells: PaginatedSpells;
   spellsByName: Array<Spell>;
 };
 
@@ -125,7 +131,7 @@ export type SpellsQueryVariables = Exact<{
 }>;
 
 
-export type SpellsQuery = { __typename?: 'Query', spells: Array<{ __typename?: 'Spell', id: number, level: number, name: string, school: string, class: string, verbal: boolean, somatic: boolean, material: boolean, materials: string, range: string, aoe: string, castingTime: string, duration: string, savingThrow: string, damage: string, source: string, sphere?: string | null }> };
+export type SpellsQuery = { __typename?: 'Query', spells: { __typename?: 'PaginatedSpells', hasMore: boolean, spells: Array<{ __typename?: 'Spell', id: number, level: number, name: string, school: string, class: string, verbal: boolean, somatic: boolean, material: boolean, materials: string, range: string, aoe: string, castingTime: string, duration: string, savingThrow: string, damage: string, source: string, sphere?: string | null }> } };
 
 
 export const HelloDocument = gql`
@@ -225,23 +231,26 @@ export type SpellByIdQueryResult = Apollo.QueryResult<SpellByIdQuery, SpellByIdQ
 export const SpellsDocument = gql`
     query Spells($nameCursor: String, $lvlCursor: Float, $limit: Float!) {
   spells(nameCursor: $nameCursor, lvlCursor: $lvlCursor, limit: $limit) {
-    id
-    level
-    name
-    school
-    class
-    verbal
-    somatic
-    material
-    materials
-    range
-    aoe
-    castingTime
-    duration
-    savingThrow
-    damage
-    source
-    sphere
+    hasMore
+    spells {
+      id
+      level
+      name
+      school
+      class
+      verbal
+      somatic
+      material
+      materials
+      range
+      aoe
+      castingTime
+      duration
+      savingThrow
+      damage
+      source
+      sphere
+    }
   }
 }
     `;
