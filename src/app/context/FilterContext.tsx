@@ -1,4 +1,4 @@
-import { Components, DmgOption, School, Spell } from "@/lib/types"
+import { Components, DmgOption, School, Spell, Sphere } from "@/lib/types"
 import { createContext, useState } from "react"
 
 function useFilter <T>(): [T[], (u: T) => void, (f: T[]) => void] {
@@ -52,6 +52,10 @@ export type FilterContextType = {
     classes: string[]
     uClasses: (c: string) => void
     sClasses: (ca: string[]) => void
+
+    spheres: Sphere[]
+    uSpheres: (c: Sphere) => void
+    sSpheres: (ca: Sphere[]) => void
     
     damaging: DmgOption
     sDamaging: (d: DmgOption) => void
@@ -72,6 +76,7 @@ export const FilterProvider = ({children}: Readonly<{children: React.ReactNode}>
     const [components, uComponents, sComponents] = useFilter<Components>()
     const [classes, uClasses, sClasses] = useFilter<string>()
     const [damaging, sDamaging] = useState<DmgOption>(0)
+    const [spheres, uSpheres, sSpheres] = useFilter<Sphere>()
 
     function runFilters(spell: Spell): boolean {
         // Some high IQ engineering right here
@@ -95,7 +100,7 @@ export const FilterProvider = ({children}: Readonly<{children: React.ReactNode}>
 
     return <FilterContext.Provider value={{schools, uSchools, sSchools, ranges, uRanges, sRanges, aoes, uAoes, sAoes, castingTimes, uCastingTimes, 
     sCastingTimes, savingThrows, uSavingThrows, sSavingThrows, sources, uSources, sSources, components, uComponents, sComponents, classes, uClasses, 
-    sClasses, damaging, sDamaging, runFilters}}>
+    sClasses, damaging, sDamaging, runFilters, spheres, uSpheres, sSpheres}}>
         {children}
     </FilterContext.Provider>
 }

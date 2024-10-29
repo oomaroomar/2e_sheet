@@ -46,8 +46,8 @@ export default function Everything() {
   
   return <div className="h-screen overflow-hidden">
   <Navbar setSpecModalState={() => setSpecModalState(!showSearchModal)}  setSearchModalState={() => setSearchModalState(!showSearchModal)}/>
-  <div>
-  <div className="w-full h-screen flex p-2" >
+  <div className="">
+  <div className="w-full overflow-auto flex p-2" >
   <div className="hidden lg:flex flex-1 flex-wrap w-1/3 overflow-auto p-4 pr-20 align-self-end" >
     {spellList.map(id => <SpellInfo spellId={id} key={id} />)}
   </div>
