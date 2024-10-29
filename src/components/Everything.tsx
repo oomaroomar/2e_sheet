@@ -12,7 +12,6 @@ export default function Everything() {
 
   const [showSearchModal, setSearchModalState] = useState<boolean>(false)
   const [showSpecModal, setSpecModalState] = useState<boolean>(false)
-  // Maybe instead of sophisticated pagination it is better to first request, say, 100. Then request the rest.
 
   const handleKeyPress = useCallback((event: KeyboardEvent) => {
       if(event.ctrlKey === true) {
@@ -44,18 +43,15 @@ export default function Everything() {
   }
 
   
-  return <div className="h-screen overflow-hidden">
-  <Navbar setSpecModalState={() => setSpecModalState(!showSearchModal)}  setSearchModalState={() => setSearchModalState(!showSearchModal)}/>
-  <div className="">
-  <div className="w-full overflow-auto flex p-2" >
-  <div className="hidden lg:flex flex-1 flex-wrap w-1/3 overflow-auto p-4 pr-20 align-self-end" >
-    {spellList.map(id => <SpellInfo spellId={id} key={id} />)}
-  </div>
-  
-  <SpellList blur={showSearchModal || showSpecModal} inspectSpell={inspectSpell} />
-  <SearchModal inspectSpell={inspectSpell} setModalState={(ns: boolean) => setSearchModalState(ns)} showModal={showSearchModal} key={'search'} />
-  <SpecModal setModalState={setSpecModalState} showModal={showSpecModal}  />
-  </div>
-  </div>
+  return <div className="h-screen flex flex-col  overflow-hidden">
+    <Navbar setSpecModalState={() => setSpecModalState(!showSearchModal)}  setSearchModalState={() => setSearchModalState(!showSearchModal)}/>
+      <div className="w-full grow overflow-auto flex p-2" >
+        <div className="hidden lg:block w-1/2 overflow-auto p-4 pr-20 align-self-end" >
+          {spellList.map(id => <SpellInfo spellId={id} key={id} />)}
+        </div>
+        <SpellList blur={showSearchModal || showSpecModal} inspectSpell={inspectSpell} />
+      </div>
+    <SearchModal inspectSpell={inspectSpell} setModalState={(ns: boolean) => setSearchModalState(ns)} showModal={showSearchModal} key={'search'} />
+    <SpecModal setModalState={setSpecModalState} showModal={showSpecModal}  />
   </div>
 }

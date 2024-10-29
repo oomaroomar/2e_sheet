@@ -16,7 +16,7 @@ export interface SpecFilters {
     'Divination': ['Conjuration']
     'Enchantment': ['Evocation', 'Necromancy']
     'Evocation': ['Enchantment', 'Conjuration']
-    'Illusion': ['Necromancy', 'Evocation']
+    'Illusion': ['Necromancy', 'Evocation', 'Abjuration']
     'Necromancy': ['Illusion', 'Enchantment']
     '': []
 }
@@ -28,7 +28,7 @@ export const specFilters: SpecFilters = {
     'Divination': ['Conjuration'],
     'Enchantment': ['Evocation', 'Necromancy'],
     'Evocation': ['Enchantment', 'Conjuration'],
-    'Illusion': ['Necromancy', 'Evocation'],
+    'Illusion': ['Necromancy', 'Evocation', 'Abjuration'],
     'Necromancy': ['Illusion', 'Enchantment'],
     '': []
 }

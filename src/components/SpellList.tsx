@@ -38,7 +38,7 @@ export default function SpellList({inspectSpell, blur}: SpellListProps) {
     
    
     return <div className={`flex flex-wrap w-3/5 overflow-auto flex-1 ${blur ? 'blur-sm' : ''}`} >
-        {data!.spells.spells.map(spell => (filter.schools as string[]).includes(spell.school) ? '' : <SpellCard key={spell.id} spell={spell} inspectSpell={inspectSpell} />)} 
+        {data!.spells.spells.map(spell => filter.runFilters(spell) ? <SpellCard key={spell.id} spell={spell} inspectSpell={inspectSpell} /> : '')} 
     </div>
 
 }

@@ -15,6 +15,8 @@ const config: Config = {
     "bg-Evocation",
     "bg-Illusion",
     "bg-Necromancy",
+    "bg-Wizard",
+    "bg-Cleric",
     "shadow-Abjuration",
     "shadow-Alteration",
     "shadow-Conjuration",
@@ -43,6 +45,8 @@ const config: Config = {
         Evocation: '#CC0000',
         Illusion: '#674EA7',
         Necromancy: '#666666',
+        Wizard: '#6A3190',
+        Cleric: '#f0e637'
       },
       spacing: {
         '12vh': '12vh',
