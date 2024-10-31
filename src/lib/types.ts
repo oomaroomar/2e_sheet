@@ -1,3 +1,5 @@
+import { includes } from "./utils";
+
 export interface Spell {
     id: number
     level: number;
@@ -27,8 +29,13 @@ export type Components = typeof components[number]
 // -1 for non damaging
 // 0 for don't care
 // 1 for damaging
-export const dmgOptions = [-1, 0, 1] as const
+export const dmgOptions = [0, 1, -1] as const
 export type DmgOption = typeof dmgOptions[number]
+export function dmgToTextConverter(n: number): string {
+    if(n === -1) return 'Nondamaging'
+    if(n === 1) return 'Damaging'
+    return 'Any'
+}
 
 export type School = 'Abjuration' |'Alteration' | 'Conjuration' | 'Divination'
     |'Enchantment'
@@ -47,11 +54,12 @@ export const schools: Readonly<School[]> = ['Abjuration',
 
 export type CastingClass = "Wizard" | "Cleric"
 
-// 0: '0', 'self' or 'touch'
+// Self: '0', 'self'
+// Touch: 'touch'
 // Feet: 'feet' or 'ft.'
 // Yards: 'yards' or 'yds.'
 // Special: 'Special'
-export const Ranges = ['0', 'Feet', 'Yards', 'Special'] as const
+export const Ranges = ['Self','Touch', 'Feet', 'Yards', 'Special'] as const
 export type Range = typeof Ranges[number]
 
 // 1 creature: '1 creature' and 'creature touched'
@@ -67,6 +75,68 @@ export type SavingThrow = typeof SavingThrows[number]
 export const Sources = ['PHB', 'ToM', 'S&M', 'Homebrew', ] as const
 export type Source = typeof Sources[number]
 
+export const isGod = (tbd: string): tbd is God => includes(gods, tbd)
+
+export const gods = ["Aaris" ,
+    "Agepa" ,
+    "Astair" ,
+    "Bellum" ,
+    "Chis" ,
+    "Efra" ,
+    "Felumbra" ,
+    "Illumis" ,
+    "Jexel" ,
+    "Malkis" ,
+    "Martha" ,
+    "Mathis/Safia" ,
+    "Matrigal" ,
+    "Nadinis" ,
+    "Nerual" ,
+    "Ponos" ,
+    "Quantarious" ,
+    "Relkor" ,
+    "Reluna" ,
+    "Sayor" ,
+    "Solt" ,
+    "Tempos" ,
+    "Terrasa" ,
+    "Terrin" ,
+    "Velmontarious" ,
+    "Velthara",
+    "Voraci" ,
+    "Womaatoar"] as const
+
+export type God = 
+    "Aaris" |
+    "Agepa" |
+    "Astair" |
+    "Bellum" |
+    "Chis" |
+    "Efra" |
+    "Felumbra" |
+    "Illumis" |
+    "Jexel" |
+    "Malkis" |
+    "Martha" |
+    "Mathis/Safia" |
+    "Matrigal" |
+    "Nadinis" |
+    "Nerual" |
+    "Ponos" |
+    "Quantarious" |
+    "Relkor" |
+    "Reluna" |
+    "Sayor" |
+    "Solt" |
+    "Tempos" |
+    "Terrasa" |
+    "Terrin" |
+    "Velmontarious" |
+    "Velthara"|
+    "Voraci" |
+    "Womaatoar"
+
+    
 
 export type Sphere =
   | "All"
@@ -87,8 +157,45 @@ export type Sphere =
   | "Protection"
   | "Summoning"
   | "Sun"
+  | 'Time'
   | "Thought"
   | "Travelers"
   | "War"
   | "Wards"
   | "Weather"
+  | 'Air'
+  | 'Earth'
+  | 'Fire'
+  | 'Water'
+
+  export const Spheres = [
+  "All"
+  , "Animal"
+  , "Astral"
+  , "Chaos"
+  , "Charm"
+  , "Combat"
+  , "Creation"
+  , "Divination"
+  , "Elemental"
+  , "Guardian"
+  , "Healing"
+  , "Law"
+  , "Necromantic"
+  , "Numbers"
+  , "Plant"
+  , "Protection"
+  , "Summoning"
+  , "Sun"
+  , 'Time'
+  , "Thought"
+  , "Travelers"
+  , "War"
+  , "Wards"
+  , "Weather"
+  , 'Air'
+  , 'Earth'
+  , 'Fire'
+  , 'Water'
+  ] as const
+  

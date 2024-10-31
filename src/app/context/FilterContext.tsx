@@ -11,7 +11,7 @@ function useFilter <T>(): [T[], (u: T) => void, (f: T[]) => void] {
     const updateFilter = (u: T): void => {
         const i = filter.findIndex(f => f === u)
         if (i === -1) {
-            setFilter([u].concat(filter))
+            setFilter(filter.concat([u]))
         } else {
             setFilter(filter.toSpliced(i,1))
         }
@@ -53,9 +53,13 @@ export type FilterContextType = {
     uClasses: (c: CastingClass) => void
     sClasses: (ca: CastingClass[]) => void
 
-    spheres: Sphere[]
-    uSpheres: (c: Sphere) => void
-    sSpheres: (ca: Sphere[]) => void
+    majorSpheres: Sphere[]
+    uMSpheres: (c: Sphere) => void
+    sMSpheres: (ca: Sphere[]) => void
+
+    minorSpheres: Sphere[]
+    umSpheres: (c: Sphere) => void
+    smSpheres: (ca: Sphere[]) => void
     
     damaging: DmgOption
     sDamaging: (d: DmgOption) => void
@@ -78,7 +82,8 @@ export const FilterProvider = ({children}: Readonly<{children: React.ReactNode}>
     const [components, uComponents, sComponents] = useFilter<Components>()
     const [classes, uClasses, sClasses] = useFilter<CastingClass>()
     const [damaging, sDamaging] = useState<DmgOption>(0)
-    const [spheres, uSpheres, sSpheres] = useFilter<Sphere>()
+    const [minorSpheres, umSpheres, smSpheres] = useFilter<Sphere>()
+    const [majorSpheres, uMSpheres, sMSpheres] = useFilter<Sphere>()
 
     function resetFilters() {
         sSchools([])
@@ -90,13 +95,18 @@ export const FilterProvider = ({children}: Readonly<{children: React.ReactNode}>
         sComponents([])
         sClasses([])
         sDamaging(0)
-        sSpheres([])
+        smSpheres([])
+        sMSpheres([])
     }
 
     // takes a spells aoe as input
     // returns true when we SHOULD filter out a spell based on AoE
-    function explicitAoeFilter(aoe: string): boolean{
-        if(aoes.some(a => aoe.includes(a))) return true
+    function explicitAoeFilter(spell: SpellLite): boolean{
+        const aoe = spell.aoe.toLocaleLowerCase()
+        if(aoes.some(a => aoe.includes(a.toLowerCase()))) {
+            console.log(spell, 'matched filter')
+            return true
+        } 
         // Data isn't named with a convention, so need to add this stuff
         if(aoes.includes('1 creature')) {
             if(aoe.includes('1 animal')) return true
@@ -107,20 +117,43 @@ export const FilterProvider = ({children}: Readonly<{children: React.ReactNode}>
         return false
     }
 
+    function explicitSTFilter(s: string): boolean {
+        if(savingThrows.length === 0) return false
+        if(savingThrows.includes(s)) return false
+        if(savingThrows.includes('Half') && s === '1/2') return false
+        return true
+    }
+
+    // Return true when spell should be filtered
+    function sphereFilter(sp: Sphere[], lvl: number): boolean {
+        if(majorSpheres.length === 0 && 0 === minorSpheres.length) return false
+        if(sp[0] === 'All') return false
+        if((sp.filter(s => majorSpheres.includes(s)).length !== 0) 
+            || (lvl <= 3 && sp.filter(s => minorSpheres.includes(s)).length !== 0)
+            ) return false
+        return true
+    }
+
+    // Filter was flipped i.e. things that should be filtered are not filtered and vice versa :)
     function runFilters(spell: SpellLite): boolean {
         // Some high IQ engineering right here
         if((schools as string[]).includes(spell.school)) return false
-        if(ranges.includes(spell.range)) return false
-        if(explicitAoeFilter(spell.aoe.toLocaleLowerCase())) return false
-        if(castingTimes.includes(spell.castingTime)) return false
-        if(savingThrows.includes(spell.savingThrow)) return false
-        if(sources.includes(spell.source)) return false
-        if((classes as string[]).includes(spell.class)) return false
+        if(ranges.length !== 0 && !ranges.includes(spell.range)) return false
+        if(aoes.length !== 0 && !explicitAoeFilter(spell)) return false
+        if(castingTimes.length !== 0 && !castingTimes.includes(spell.castingTime)) return false
+        if(explicitSTFilter(spell.savingThrow)) return false
+        if(sources.length !== 0 && !sources.includes(spell.source)) return false
+        if(components.length !== 0) {
+            if(spell.somatic && !components.includes('somatic')) return false  
+            if(spell.verbal && !components.includes('verbal')) return false
+            if(spell.material && !components.includes('material')) return false
+        }
+        // This one is weird
+        if(classes.length !== 0 && !(classes as string[]).includes(spell.class)) return false
+        if(spell.spheres !== null && spell.spheres?.length !== 0) {
+            if(sphereFilter((spell.spheres as Sphere[]), spell.level)) return false
+        }
         
-        if(spell.somatic && components.includes('somatic')) return false  
-        if(spell.verbal && components.includes('verbal')) return false
-        if(spell.material && components.includes('material')) return false
-
         if(spell.damage === '' && damaging == 1) return false
         if(spell.damage !== '' && damaging == -1) return false
 
@@ -129,7 +162,7 @@ export const FilterProvider = ({children}: Readonly<{children: React.ReactNode}>
 
     return <FilterContext.Provider value={{schools, uSchools, sSchools, ranges, uRanges, sRanges, aoes, uAoes, sAoes, castingTimes, uCastingTimes, 
     sCastingTimes, savingThrows, uSavingThrows, sSavingThrows, sources, uSources, sSources, components, uComponents, sComponents, classes, uClasses, 
-    sClasses, damaging, sDamaging, runFilters, spheres, uSpheres, sSpheres, resetFilters}}>
+    sClasses, damaging, sDamaging, runFilters, majorSpheres, uMSpheres, sMSpheres, minorSpheres, umSpheres, smSpheres, resetFilters}}>
         {children}
     </FilterContext.Provider>
 }

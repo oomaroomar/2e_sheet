@@ -1,5 +1,5 @@
 import Magnifier from "@/svgs/Magnifier"
-import { FormEvent, useCallback, useContext, useEffect, useRef, useState } from "react"
+import { FormEvent, useCallback, useContext, useEffect, useRef, useState, useTransition } from "react"
 import Fuse from 'fuse.js'
 import SearchResult from "./SearchResult"
 import { Spell, SpellLite } from "@/lib/types"
@@ -11,7 +11,7 @@ interface SearchModalProps {
     showModal: boolean
     setModalState: (ns: boolean) => void
     inspectSpell: (s: SpellLite) => void
-
+    
 }
 
 export default function SearchModal({showModal, setModalState, inspectSpell}:SearchModalProps) {
@@ -19,7 +19,7 @@ export default function SearchModal({showModal, setModalState, inspectSpell}:Sea
     const modalRef = useRef<HTMLInputElement>(null)
     const [searchPattern, setSearchPattern] = useState<string>('')
     const filters = useContext(FilterContext) as FilterContextType
-
+    const [, startTransition] = useTransition()
 
     const spellsQuery = apolloCache.readQuery({
         query: SpellsDocument,
@@ -53,7 +53,7 @@ export default function SearchModal({showModal, setModalState, inspectSpell}:Sea
             document.removeEventListener('mousedown', checkClickOutside)
             document.removeEventListener('keydown', handleKeyPress)
         }
-    }, [showModal, setModalState, handleKeyPress])
+    }, [showModal, setModalState, handleKeyPress, modalRef])
 
     if(!showModal || spellsQuery === null) return null
 
@@ -72,7 +72,7 @@ export default function SearchModal({showModal, setModalState, inspectSpell}:Sea
             <header className="px-4 py-0 relative flex items-center" >
                 <form onSubmit={handleEnter} className="appearance-none flex items-center flex-auto" >
                     <label><Magnifier/></label>
-                    <input onChange={e => setSearchPattern(e.target.value)} autoFocus={true} className="outline-none appearance-none w-full h-14 ml-3 mr-4 flex" type="search" placeholder="Search spells" spellCheck='false' autoCapitalize="false" autoCorrect="false" autoComplete="off" />
+                    <input onChange={e => startTransition(() => setSearchPattern(e.target.value))} autoFocus={true} className="outline-none appearance-none w-full h-14 ml-3 mr-4 flex" type="search" placeholder="Search spells" spellCheck='false' autoCapitalize="false" autoCorrect="false" autoComplete="off" />
                 </form>
                 <button>
                     Cancel

@@ -4,13 +4,15 @@ import SearchModal from "./SearchModal"
 import SpellInfo from "./SpellInfo"
 import SpellList from "./SpellList"
 import SpecModal from "./SpecModal"
-import { SpellLite } from "@/lib/types"
+import { gods, schools, SpellLite } from "@/lib/types"
+
 
 export default function Everything() {
     
   const [spellList, setSpellList] = useState<number[]>([])
 
   const [showSearchModal, setSearchModalState] = useState<boolean>(false)
+  const [showGodModal, setGodModalState] = useState<boolean>(false)
   const [showSpecModal, setSpecModalState] = useState<boolean>(false)
 
   const handleKeyPress = useCallback((event: KeyboardEvent) => {
@@ -44,14 +46,15 @@ export default function Everything() {
 
   
   return <div className="h-screen flex flex-col  overflow-hidden">
-    <Navbar setSpecModalState={() => setSpecModalState(!showSearchModal)}  setSearchModalState={() => setSearchModalState(!showSearchModal)}/>
+    <Navbar setGodModalState={() => setGodModalState(!showSearchModal)} setSpecModalState={() => setSpecModalState(!showSearchModal)}  setSearchModalState={() => setSearchModalState(!showSearchModal)}/>
       <div className="w-full grow overflow-auto flex p-2" >
-        <div className="hidden lg:block w-1/2 overflow-auto p-4 pr-20 align-self-end" >
+        <div className="hidden w-1/2 overflow-auto p-2 pl-20 pr-10 align-self-end lg:grid grid-cols-1" >
           {spellList.map(id => <SpellInfo spellId={id} key={id} />)}
         </div>
         <SpellList blur={showSearchModal || showSpecModal} inspectSpell={inspectSpell} />
       </div>
     <SearchModal inspectSpell={inspectSpell} setModalState={(ns: boolean) => setSearchModalState(ns)} showModal={showSearchModal} key={'search'} />
-    <SpecModal setModalState={setSpecModalState} showModal={showSpecModal}  />
+    <SpecModal schools={schools} setModalState={setSpecModalState} showModal={showSpecModal}  />
+    <SpecModal schools={gods} setModalState={setGodModalState} showModal={showGodModal}  />
   </div>
 }

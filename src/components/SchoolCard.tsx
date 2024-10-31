@@ -1,9 +1,9 @@
-import { School } from '@/lib/types'
+import { God, School } from '@/lib/types'
 
 
 interface SchoolCardProps {
-    school: School,
-    setFilter: (s: School) => void
+    school: School | God,
+    setFilter: (s: School | God) => void
 }
 
 export default function SchoolCard({school, setFilter}: SchoolCardProps) {

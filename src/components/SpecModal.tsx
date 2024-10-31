@@ -1,23 +1,24 @@
 import Magnifier from "@/svgs/Magnifier"
-import { FormEvent, useCallback, useEffect, useRef, useState, useContext } from "react"
+import { FormEvent, useCallback, useContext, useEffect, useRef, useState } from "react"
 import Fuse from 'fuse.js'
-import { School, schools } from "@/lib/types"
-import { specFilters } from "@/lib/constants"
 import SchoolCard from "./SchoolCard"
+import { godFilters } from "@/lib/godStuff"
+import { specFilters } from "@/lib/constants"
+import { God, isGod, School } from "@/lib/types"
 import { FilterContext, FilterContextType } from "@/app/context/FilterContext"
 
 
 interface SearchModalProps {
     showModal: boolean
     setModalState: (ns: boolean) => void
+    schools: ReadonlyArray<School> | ReadonlyArray<God>
 }
 
-export default function SpecModal({showModal, setModalState}:SearchModalProps) {
+export default function SpecModal({showModal, setModalState, schools}:SearchModalProps) {
 
     const modalRef = useRef<HTMLInputElement>(null)
     const [searchPattern, setSearchPattern] = useState<string>('')
-
-    const {sSchools} = useContext(FilterContext) as FilterContextType
+    const {sMSpheres, smSpheres, sSchools, sClasses} = useContext(FilterContext) as FilterContextType
 
     const fuse = new Fuse(schools)
 
@@ -45,14 +46,24 @@ export default function SpecModal({showModal, setModalState}:SearchModalProps) {
         }
     }, [showModal, setModalState, handleKeyPress])
 
-    const setFilter = (s: School) => {
-        sSchools(specFilters[s])
+    const setFilter = (s: School | God) => {
+        if(isGod(s)) {
+            sMSpheres(godFilters[s].major)
+            smSpheres(godFilters[s].minor)
+            sSchools([])
+            sClasses(['Cleric'])
+        } else {
+            sSchools(specFilters[s])
+            smSpheres([])
+            sMSpheres([])
+            sClasses(['Wizard'])
+        }
+        setModalState(false)
     }
 
     const handleEnter = (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault()
         setFilter(fuse.search(searchPattern)[0].item)
-        setModalState(false)
     }
 
 
