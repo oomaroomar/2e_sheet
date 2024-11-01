@@ -1,5 +1,5 @@
-query Spells($nameCursor: String, $lvlCursor: Float, $limit: Float!) {
-  spells(nameCursor: $nameCursor, lvlCursor: $lvlCursor, limit: $limit) {
+query Spells($nameCursor: String, $lvlCursor: Float, $limit: Float!, $castingClass: String) {
+  spells(nameCursor: $nameCursor, lvlCursor: $lvlCursor, limit: $limit, castingClass: $castingClass) {
     hasMore
     spells {
       id

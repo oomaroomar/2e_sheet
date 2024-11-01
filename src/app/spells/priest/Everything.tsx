@@ -1,9 +1,9 @@
 import { useState, useCallback, useEffect } from "react"
-import Navbar from "./NavBar"
-import SearchModal from "./SearchModal"
-import SpellInfo from "./SpellInfo"
-import SpellList from "./SpellList"
-import SpecModal from "./SpecModal"
+import Navbar from "@/components/NavBar"
+import SearchModal from "@/components/SearchModal"
+import SpellInfo from "@/components/SpellInfo"
+import SpellList from "@/components/SpellList"
+import SpecModal from "@/components/SpecModal"
 import { gods, schools, SpellLite } from "@/lib/types"
 
 
@@ -51,7 +51,7 @@ export default function Everything() {
         <div className="hidden w-1/2 overflow-auto p-2 pl-20 pr-10 align-self-end lg:grid grid-cols-1" >
           {spellList.map(id => <SpellInfo spellId={id} key={id} />)}
         </div>
-        <SpellList castingClass={null} blur={showSearchModal || showSpecModal} inspectSpell={inspectSpell} />
+        <SpellList castingClass={'Cleric'} blur={showSearchModal || showSpecModal} inspectSpell={inspectSpell} />
       </div>
     <SearchModal inspectSpell={inspectSpell} setModalState={(ns: boolean) => setSearchModalState(ns)} showModal={showSearchModal} key={'search'} />
     <SpecModal schools={schools} setModalState={setSpecModalState} showModal={showSpecModal}  />

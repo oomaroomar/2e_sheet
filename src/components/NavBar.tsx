@@ -1,6 +1,6 @@
 import { AoEs, CastingTimes, components, dmgToTextConverter, Ranges, SavingThrows, schools, Sources } from "@/lib/types"
 import { useContext, useState } from "react"
-import { FilterContext, FilterContextType } from "@/app/context/FilterContext"
+import { FilterContext, FilterContextType } from "@/context/FilterContext"
 import FilterButton, { ExistingFilters } from "./FilterButton"
 import FilterButtonWithSpecialNeeds from "./FilterButtonWithSpecialNeeds"
 

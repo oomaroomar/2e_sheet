@@ -17,11 +17,20 @@ export type Scalars = {
   Float: { input: number; output: number; }
 };
 
+export type FieldError = {
+  __typename?: 'FieldError';
+  field: Scalars['String']['output'];
+  message: Scalars['String']['output'];
+};
+
 export type Mutation = {
   __typename?: 'Mutation';
   createSpell: Spell;
   createSpells: Array<Spell>;
   deleteSpell: Spell;
+  login: UserResponse;
+  logout: Scalars['Boolean']['output'];
+  register: UserResponse;
 };
 
 
@@ -39,6 +48,17 @@ export type MutationDeleteSpellArgs = {
   id: Scalars['Float']['input'];
 };
 
+
+export type MutationLoginArgs = {
+  password: Scalars['String']['input'];
+  usernameOrEmail: Scalars['String']['input'];
+};
+
+
+export type MutationRegisterArgs = {
+  options: UsernamePasswordInput;
+};
+
 export type PaginatedSpells = {
   __typename?: 'PaginatedSpells';
   hasMore: Scalars['Boolean']['output'];
@@ -48,6 +68,7 @@ export type PaginatedSpells = {
 export type Query = {
   __typename?: 'Query';
   hello: Scalars['String']['output'];
+  me?: Maybe<User>;
   spellByID: Spell;
   spells: PaginatedSpells;
   spellsByName: Array<Spell>;
@@ -60,6 +81,7 @@ export type QuerySpellByIdArgs = {
 
 
 export type QuerySpellsArgs = {
+  castingClass?: InputMaybe<Scalars['String']['input']>;
   limit: Scalars['Float']['input'];
   lvlCursor?: InputMaybe<Scalars['Float']['input']>;
   nameCursor?: InputMaybe<Scalars['String']['input']>;
@@ -112,6 +134,25 @@ export type SpellInput = {
   verbal: Scalars['Boolean']['input'];
 };
 
+export type User = {
+  __typename?: 'User';
+  createdAt: Scalars['String']['output'];
+  id: Scalars['Float']['output'];
+  updatedAt: Scalars['String']['output'];
+  username: Scalars['String']['output'];
+};
+
+export type UserResponse = {
+  __typename?: 'UserResponse';
+  errors?: Maybe<Array<FieldError>>;
+  user?: Maybe<User>;
+};
+
+export type UsernamePasswordInput = {
+  password: Scalars['String']['input'];
+  username: Scalars['String']['input'];
+};
+
 export type HelloQueryVariables = Exact<{ [key: string]: never; }>;
 
 
@@ -128,6 +169,7 @@ export type SpellsQueryVariables = Exact<{
   nameCursor?: InputMaybe<Scalars['String']['input']>;
   lvlCursor?: InputMaybe<Scalars['Float']['input']>;
   limit: Scalars['Float']['input'];
+  castingClass?: InputMaybe<Scalars['String']['input']>;
 }>;
 
 
@@ -229,8 +271,13 @@ export type SpellByIdLazyQueryHookResult = ReturnType<typeof useSpellByIdLazyQue
 export type SpellByIdSuspenseQueryHookResult = ReturnType<typeof useSpellByIdSuspenseQuery>;
 export type SpellByIdQueryResult = Apollo.QueryResult<SpellByIdQuery, SpellByIdQueryVariables>;
 export const SpellsDocument = gql`
-    query Spells($nameCursor: String, $lvlCursor: Float, $limit: Float!) {
-  spells(nameCursor: $nameCursor, lvlCursor: $lvlCursor, limit: $limit) {
+    query Spells($nameCursor: String, $lvlCursor: Float, $limit: Float!, $castingClass: String) {
+  spells(
+    nameCursor: $nameCursor
+    lvlCursor: $lvlCursor
+    limit: $limit
+    castingClass: $castingClass
+  ) {
     hasMore
     spells {
       id
@@ -270,6 +317,7 @@ export const SpellsDocument = gql`
  *      nameCursor: // value for 'nameCursor'
  *      lvlCursor: // value for 'lvlCursor'
  *      limit: // value for 'limit'
+ *      castingClass: // value for 'castingClass'
  *   },
  * });
  */

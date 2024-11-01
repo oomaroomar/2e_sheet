@@ -5,7 +5,7 @@ import SchoolCard from "./SchoolCard"
 import { godFilters } from "@/lib/godStuff"
 import { specFilters } from "@/lib/constants"
 import { God, isGod, School } from "@/lib/types"
-import { FilterContext, FilterContextType } from "@/app/context/FilterContext"
+import { FilterContext, FilterContextType } from "@/context/FilterContext"
 
 
 interface SearchModalProps {

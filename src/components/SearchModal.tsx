@@ -4,8 +4,8 @@ import Fuse from 'fuse.js'
 import SearchResult from "./SearchResult"
 import { Spell, SpellLite } from "@/lib/types"
 import { SpellsDocument, SpellsQuery } from "@/gql/graphql"
-import { apolloCache } from "@/app/page"
-import { FilterContext, FilterContextType } from "@/app/context/FilterContext"
+import { apolloCache } from "@/lib/apolloClient"
+import { FilterContext, FilterContextType } from "@/context/FilterContext"
 
 interface SearchModalProps {
     showModal: boolean
