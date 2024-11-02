@@ -1,8 +1,8 @@
 import { useState, useCallback, useEffect } from "react"
 import Navbar from "@/components/NavBar"
 import SearchModal from "@/components/SearchModal"
-import SpellInfo from "@/components/SpellInfo"
-import SpellList from "@/components/SpellList"
+import VerboseSpell from "@/components/VerboseSpell"
+import SpellList from "@/components/SpellGrid"
 import SpecModal from "@/components/SpecModal"
 import { gods, schools, SpellLite } from "@/lib/types"
 
@@ -45,11 +45,11 @@ export default function Everything() {
   }
 
   
-  return <div className="h-screen flex flex-col  overflow-hidden">
+  return <div className="h-screen flex flex-col overflow-hidden">
     <Navbar setGodModalState={() => setGodModalState(!showSearchModal)} setSpecModalState={() => setSpecModalState(!showSearchModal)}  setSearchModalState={() => setSearchModalState(!showSearchModal)}/>
       <div className="w-full grow overflow-auto flex p-2" >
         <div className="hidden w-1/2 overflow-auto p-2 pl-20 pr-10 align-self-end lg:grid grid-cols-1" >
-          {spellList.map(id => <SpellInfo spellId={id} key={id} />)}
+          {spellList.map(id => <VerboseSpell spellId={id} key={id} />)}
         </div>
         <SpellList castingClass={'Cleric'} blur={showSearchModal || showSpecModal} inspectSpell={inspectSpell} />
       </div>

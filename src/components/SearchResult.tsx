@@ -2,11 +2,11 @@ import { SpellLite } from '@/lib/types'
 
 interface SpellCardProps {
     spell: SpellLite,
-    inspectSpell: (spell: SpellLite) => void
+    inspectSpell: (n: number) => void
 }
 
 export default function SearchResult({spell, inspectSpell}: SpellCardProps) {
-    return <div className="container w-full p-3" onClick={() => inspectSpell(spell)} >
+    return <div className="container w-full p-3" onClick={() => inspectSpell(spell.id)} >
         <div className={`grid grid-cols-2 gap-y-2 bg-white text-black rounded-xl hover:shadow-md hover:shadow-${spell.school}`} >
             <div className={`col-span-2 grid grid-cols-10 bg-${spell.school} rounded-t-xl text-xl hover:cursor-pointer`}>
                 <div className="px-2 py-1" ><b>{spell.level}{')'}</b></div>

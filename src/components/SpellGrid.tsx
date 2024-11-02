@@ -1,21 +1,22 @@
-import SpellCard from '@/components/SpellCard'
-import { CastingClass, SpellLite } from '@/lib/types'
+import SuccinctSpell from '@/components/SuccinctSpell'
+import { CastingClass } from '@/lib/types'
 import { useContext, useTransition, useState, useEffect } from "react"
 import { FilterContext, FilterContextType } from "@/context/FilterContext"
 import { useSpellsQuery } from '@/gql/graphql'
+import { DescriptionListContext, DescriptionListContextType } from '@/context/DescriptionListContext'
 
 
 interface SpellListProps {
-    inspectSpell: (spell: SpellLite) => void
-    blur: boolean
+    // blur: boolean
     castingClass: CastingClass | null
 }
 
-export default function SpellList({inspectSpell, blur, castingClass}: SpellListProps) {
+export default function SpellGrid({castingClass}: SpellListProps) {
     const [, startTransition] = useTransition()
     const [done, setDone] = useState<boolean>(false)
     const filter = useContext(FilterContext) as FilterContextType
     const {data, fetchMore, loading} = useSpellsQuery({variables: {limit: 100, lvlCursor: null, nameCursor: null, castingClass}})
+    const {addSpell} = useContext(DescriptionListContext) as DescriptionListContextType
 
     // most retarded pagination known to man but unironically works here maybe once apollo fixes their networkStatus thing
     // (or i learn to use it) i'll change to something more sophisticated
@@ -37,10 +38,7 @@ export default function SpellList({inspectSpell, blur, castingClass}: SpellListP
 
     if(loading) return <div>loading</div>
 
-    
-   
-    return <div className={`flex flex-wrap w-3/5 overflow-auto flex-1 ${blur ? 'blur-sm' : ''}`} >
-        {data!.spells.spells.map(spell => filter.runFilters(spell) ? <SpellCard key={spell.id} spell={spell} inspectSpell={inspectSpell} /> : '')} 
+    return <div className={`flex flex-wrap w-full overflow-auto flex-1`} >
+        {data!.spells.spells.map(spell => filter.runFilters(spell) ? <SuccinctSpell key={spell.id} spell={spell} inspectSpell={addSpell} /> : '')} 
     </div>
-
 }

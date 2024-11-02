@@ -2,24 +2,25 @@ import Magnifier from "@/svgs/Magnifier"
 import { FormEvent, useCallback, useContext, useEffect, useRef, useState, useTransition } from "react"
 import Fuse from 'fuse.js'
 import SearchResult from "./SearchResult"
-import { Spell, SpellLite } from "@/lib/types"
+import { Spell } from "@/lib/types"
 import { SpellsDocument, SpellsQuery } from "@/gql/graphql"
 import { apolloCache } from "@/lib/apolloClient"
 import { FilterContext, FilterContextType } from "@/context/FilterContext"
+import { DescriptionListContext, DescriptionListContextType } from "@/context/DescriptionListContext"
 
 interface SearchModalProps {
     showModal: boolean
     setModalState: (ns: boolean) => void
-    inspectSpell: (s: SpellLite) => void
-    
 }
 
-export default function SearchModal({showModal, setModalState, inspectSpell}:SearchModalProps) {
+export default function SearchModal({showModal, setModalState}:SearchModalProps) {
 
     const modalRef = useRef<HTMLInputElement>(null)
     const [searchPattern, setSearchPattern] = useState<string>('')
     const filters = useContext(FilterContext) as FilterContextType
     const [, startTransition] = useTransition()
+    const {addSpell} = useContext(DescriptionListContext) as DescriptionListContextType
+
 
     const spellsQuery = apolloCache.readQuery({
         query: SpellsDocument,
@@ -64,7 +65,7 @@ export default function SearchModal({showModal, setModalState, inspectSpell}:Sea
 
     const handleEnter = (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault()
-        inspectSpell(fuse.search(searchPattern)[0].item)
+        addSpell(fuse.search(searchPattern)[0].item.id)
     }
 
     return <div className="h-screen w-full fixed top-0 mx-auto left-0 z-40 hidden lg:flex flex-col p-12vh">
@@ -80,7 +81,7 @@ export default function SearchModal({showModal, setModalState, inspectSpell}:Sea
             </header>
             <div className="overflow-auto flex flex-auto px-2" >
                 <div className="longlist w-full pb-6">
-                {fuse.search(searchPattern).map(spell => <SearchResult key={spell.item.id} inspectSpell={inspectSpell} spell={spell.item} />)}
+                {fuse.search(searchPattern).map(spell => <SearchResult key={spell.item.id} inspectSpell={addSpell} spell={spell.item} />)}
                 </div>
             </div>
         </div>

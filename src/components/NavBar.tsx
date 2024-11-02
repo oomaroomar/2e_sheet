@@ -7,10 +7,9 @@ import FilterButtonWithSpecialNeeds from "./FilterButtonWithSpecialNeeds"
 interface NavBarProps {
     setSearchModalState: () => void
     setSpecModalState: () => void
-    setGodModalState: () => void
 }
 
-export default function Navbar({setSearchModalState, setSpecModalState, setGodModalState}: NavBarProps) {
+export default function Navbar({setSearchModalState, setSpecModalState}: NavBarProps) {
     const filters = useContext(FilterContext) as FilterContextType
     const [showFilters, setShowFilters] = useState<boolean>(false)
     const [showAoe, toggleAoe] = useState<boolean>(false)
@@ -26,9 +25,6 @@ export default function Navbar({setSearchModalState, setSpecModalState, setGodMo
         {/* <Burger h='24px' /> */}
         <button onClick={setSearchModalState} className="hidden lg:flex items-center text-sm leading-6 text-slate-400 rounded-md ring-1 ring-slate-900/10 shadow-sm py-1.5 pl-2 pr-3 hover:ring-slate-300">
             Quick search... <span className="ml-auto pl-3 flex-none text-xs font-semibold">Ctrl + K</span>
-        </button>
-        <button onClick={setGodModalState} className="hidden lg:flex items-center text-sm leading-6 text-slate-400 rounded-md ring-1 ring-slate-900/10 shadow-sm py-1.5 pl-2 pr-3 hover:ring-slate-300">
-            Diety 
         </button>
         <button onClick={setSpecModalState} className="hidden lg:flex items-center text-sm leading-6 text-slate-400 rounded-md ring-1 ring-slate-900/10 shadow-sm py-1.5 pl-2 pr-3 hover:ring-slate-300">
             Specializations 
