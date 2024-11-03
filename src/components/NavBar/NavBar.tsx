@@ -1,10 +1,13 @@
 import { AoEs, CastingClass, CastingTimes, components, dmgToTextConverter, Ranges, SavingThrows, Sources } from "@/lib/types"
-import { useContext, useState } from "react"
+import { useContext, useEffect, useRef, useState } from "react"
 import { FilterContext, FilterContextType } from "@/context/FilterContext"
 import FilterButton, { ExistingFilters } from "./FilterButton"
 import FilterButtonWithSpecialNeeds from "./FilterButtonWithSpecialNeeds"
 import WizardNavbarContent from "./WizardNavbarContent"
 import PriestNavbarContent from './PriestNavbarContent'
+import Burger from "@/svgs/Burger"
+import LeftMenu from "./LeftMenu"
+import FilterIcon from "@/svgs/FilterIcon"
 
 interface NavBarProps {
     setSearchModalState: () => void
@@ -22,10 +25,30 @@ export default function Navbar({setSearchModalState, setSpecModalState, casterCl
     const [showRange, toggleRange] = useState<boolean>(false)
     const [showST, toggleST] = useState<boolean>(false)
     const [showSource, toggleSource] = useState<boolean>(false)
+    const [showLeftMenu, toggleLeftMenu] = useState<boolean>(false)
+
+    const ref = useRef<HTMLInputElement>(null)
+
+    useEffect(() => {
+        const checkClickOutside = (e: MouseEvent) => {
+            if(showLeftMenu && !ref?.current?.contains(e.target as Node)) {
+                toggleLeftMenu(false)
+            }
+        }
+        document.addEventListener('mousedown', checkClickOutside)
+        return () => {
+            document.removeEventListener('mousedown', checkClickOutside)
+        }
+    }, [showLeftMenu, toggleLeftMenu])
 
     return <div className="hidden z-40 w-full lg:block" >
-     <div className={`w-100% flex flex-row gap-2 ${(showFilters || casterClass === 'Cleric') ?  '' : 'border-b'} border-slate-900/10 p-2`} >
-        {/* <Burger h='24px' /> */}
+        <div ref={ref} className={`${showLeftMenu ? '' : 'hidden'} absolute pt-6 h-screen w-64 bg-slate-100 text-xl shadow-lg gap-4`}>
+            <LeftMenu/>
+        </div>
+     <div className={`w-full flex flex-row gap-2 ${showFilters ?  '' : 'border-b'} border-slate-900/10 p-2`} >
+        <div onClick={() => toggleLeftMenu(!showLeftMenu)} className="flex place-items-center justify-center hover:cursor-pointer">
+        <Burger h='24px' />
+        </div>
         <button onClick={setSearchModalState} className="hidden lg:flex items-center text-sm leading-6 text-slate-400 rounded-md ring-1 ring-slate-900/10 shadow-sm py-1.5 pl-2 pr-3 hover:ring-slate-300">
             Quick search... <span className="ml-auto pl-3 flex-none text-xs font-semibold">Ctrl + K</span>
         </button>
@@ -34,8 +57,8 @@ export default function Navbar({setSearchModalState, setSpecModalState, casterCl
         </button>
         {casterClass === 'Wizard' ? <WizardNavbarContent /> : ''}
         {casterClass === 'Cleric' ? <PriestNavbarContent/> : ''}
-        <button onClick={() => setShowFilters(!showFilters)} className="hidden lg:flex items-center text-sm leading-6 text-slate-400 rounded-md ring-1 ring-slate-900/10 shadow-sm py-1.5 pl-2 pr-3 hover:ring-slate-300">
-            Show more filters 
+        <button onClick={() => setShowFilters(!showFilters)} className="hidden lg:flex items-center text-sm leading-6 text-slate-400 rounded-md ring-1 ring-slate-900/10 shadow-sm p-1 hover:ring-slate-300">
+            <FilterIcon h="34px"/>
         </button>
         <button onClick={filters.resetFilters} className="hidden lg:flex items-center text-sm leading-6 text-slate-400 rounded-md ring-1 ring-slate-900/10 shadow-sm py-1.5 pl-2 pr-3 hover:ring-slate-300">
             Reset Filters
