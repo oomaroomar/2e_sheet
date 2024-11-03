@@ -1,7 +1,7 @@
 import Magnifier from "@/svgs/Magnifier"
 import { FormEvent, useCallback, useContext, useEffect, useRef, useState } from "react"
 import Fuse from 'fuse.js'
-import SchoolCard from "./SchoolCard"
+import SchoolCard from "../SchoolCard"
 import { godFilters } from "@/lib/godStuff"
 import { specFilters } from "@/lib/constants"
 import { God, isGod, School } from "@/lib/types"

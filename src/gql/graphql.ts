@@ -25,12 +25,20 @@ export type FieldError = {
 
 export type Mutation = {
   __typename?: 'Mutation';
+  changePassword: UserResponse;
   createSpell: Spell;
   createSpells: Array<Spell>;
   deleteSpell: Spell;
+  forgotPassword: Scalars['Boolean']['output'];
   login: UserResponse;
   logout: Scalars['Boolean']['output'];
   register: UserResponse;
+};
+
+
+export type MutationChangePasswordArgs = {
+  newPassword: Scalars['String']['input'];
+  token: Scalars['String']['input'];
 };
 
 
@@ -46,6 +54,11 @@ export type MutationCreateSpellsArgs = {
 
 export type MutationDeleteSpellArgs = {
   id: Scalars['Float']['input'];
+};
+
+
+export type MutationForgotPasswordArgs = {
+  email: Scalars['String']['input'];
 };
 
 
@@ -67,11 +80,27 @@ export type PaginatedSpells = {
 
 export type Query = {
   __typename?: 'Query';
+  allSpells: PaginatedSpells;
+  clericSpells: PaginatedSpells;
   hello: Scalars['String']['output'];
   me?: Maybe<User>;
   spellByID: Spell;
-  spells: PaginatedSpells;
   spellsByName: Array<Spell>;
+  wizardSpells: PaginatedSpells;
+};
+
+
+export type QueryAllSpellsArgs = {
+  limit: Scalars['Float']['input'];
+  lvlCursor?: InputMaybe<Scalars['Float']['input']>;
+  nameCursor?: InputMaybe<Scalars['String']['input']>;
+};
+
+
+export type QueryClericSpellsArgs = {
+  limit: Scalars['Float']['input'];
+  lvlCursor?: InputMaybe<Scalars['Float']['input']>;
+  nameCursor?: InputMaybe<Scalars['String']['input']>;
 };
 
 
@@ -80,16 +109,15 @@ export type QuerySpellByIdArgs = {
 };
 
 
-export type QuerySpellsArgs = {
-  castingClass?: InputMaybe<Scalars['String']['input']>;
-  limit: Scalars['Float']['input'];
-  lvlCursor?: InputMaybe<Scalars['Float']['input']>;
-  nameCursor?: InputMaybe<Scalars['String']['input']>;
+export type QuerySpellsByNameArgs = {
+  name: Scalars['String']['input'];
 };
 
 
-export type QuerySpellsByNameArgs = {
-  name: Scalars['String']['input'];
+export type QueryWizardSpellsArgs = {
+  limit: Scalars['Float']['input'];
+  lvlCursor?: InputMaybe<Scalars['Float']['input']>;
+  nameCursor?: InputMaybe<Scalars['String']['input']>;
 };
 
 export type Spell = {
@@ -137,9 +165,10 @@ export type SpellInput = {
 export type User = {
   __typename?: 'User';
   createdAt: Scalars['String']['output'];
+  email: Scalars['String']['output'];
   id: Scalars['Float']['output'];
   updatedAt: Scalars['String']['output'];
-  username: Scalars['String']['output'];
+  username?: Maybe<Scalars['String']['output']>;
 };
 
 export type UserResponse = {
@@ -149,14 +178,28 @@ export type UserResponse = {
 };
 
 export type UsernamePasswordInput = {
+  email: Scalars['String']['input'];
   password: Scalars['String']['input'];
   username: Scalars['String']['input'];
 };
 
-export type HelloQueryVariables = Exact<{ [key: string]: never; }>;
+export type AllSpellsQueryVariables = Exact<{
+  limit: Scalars['Float']['input'];
+  nameCursor?: InputMaybe<Scalars['String']['input']>;
+  lvlCursor?: InputMaybe<Scalars['Float']['input']>;
+}>;
 
 
-export type HelloQuery = { __typename?: 'Query', hello: string };
+export type AllSpellsQuery = { __typename?: 'Query', allSpells: { __typename?: 'PaginatedSpells', hasMore: boolean, spells: Array<{ __typename?: 'Spell', id: number, level: number, name: string, school: string, class: string, verbal: boolean, somatic: boolean, material: boolean, materials: string, range: string, aoe: string, castingTime: string, duration: string, savingThrow: string, damage: string, description: string, source: string, spheres?: Array<string> | null }> } };
+
+export type ClericSpellsQueryVariables = Exact<{
+  limit: Scalars['Float']['input'];
+  lvlCursor?: InputMaybe<Scalars['Float']['input']>;
+  nameCursor?: InputMaybe<Scalars['String']['input']>;
+}>;
+
+
+export type ClericSpellsQuery = { __typename?: 'Query', clericSpells: { __typename?: 'PaginatedSpells', hasMore: boolean, spells: Array<{ __typename?: 'Spell', id: number, level: number, name: string, school: string, class: string, verbal: boolean, somatic: boolean, material: boolean, materials: string, range: string, aoe: string, castingTime: string, duration: string, savingThrow: string, damage: string, description: string, source: string, spheres?: Array<string> | null }> } };
 
 export type SpellByIdQueryVariables = Exact<{
   id: Scalars['Int']['input'];
@@ -165,54 +208,140 @@ export type SpellByIdQueryVariables = Exact<{
 
 export type SpellByIdQuery = { __typename?: 'Query', spellByID: { __typename?: 'Spell', id: number, level: number, name: string, school: string, class: string, verbal: boolean, somatic: boolean, material: boolean, materials: string, range: string, aoe: string, castingTime: string, duration: string, savingThrow: string, damage: string, description: string, source: string, spheres?: Array<string> | null } };
 
-export type SpellsQueryVariables = Exact<{
+export type WizardSpellsQueryVariables = Exact<{
+  limit: Scalars['Float']['input'];
   nameCursor?: InputMaybe<Scalars['String']['input']>;
   lvlCursor?: InputMaybe<Scalars['Float']['input']>;
-  limit: Scalars['Float']['input'];
-  castingClass?: InputMaybe<Scalars['String']['input']>;
 }>;
 
 
-export type SpellsQuery = { __typename?: 'Query', spells: { __typename?: 'PaginatedSpells', hasMore: boolean, spells: Array<{ __typename?: 'Spell', id: number, level: number, name: string, school: string, class: string, verbal: boolean, somatic: boolean, material: boolean, materials: string, range: string, aoe: string, castingTime: string, duration: string, savingThrow: string, damage: string, source: string, spheres?: Array<string> | null }> } };
+export type WizardSpellsQuery = { __typename?: 'Query', wizardSpells: { __typename?: 'PaginatedSpells', hasMore: boolean, spells: Array<{ __typename?: 'Spell', id: number, level: number, name: string, school: string, class: string, verbal: boolean, somatic: boolean, material: boolean, materials: string, range: string, aoe: string, castingTime: string, duration: string, savingThrow: string, damage: string, description: string, source: string, spheres?: Array<string> | null }> } };
 
 
-export const HelloDocument = gql`
-    query Hello {
-  hello
+export const AllSpellsDocument = gql`
+    query AllSpells($limit: Float!, $nameCursor: String, $lvlCursor: Float) {
+  allSpells(limit: $limit, nameCursor: $nameCursor, lvlCursor: $lvlCursor) {
+    spells {
+      id
+      level
+      name
+      school
+      class
+      verbal
+      somatic
+      material
+      materials
+      range
+      aoe
+      castingTime
+      duration
+      savingThrow
+      damage
+      description
+      source
+      spheres
+    }
+    hasMore
+  }
 }
     `;
 
 /**
- * __useHelloQuery__
+ * __useAllSpellsQuery__
  *
- * To run a query within a React component, call `useHelloQuery` and pass it any options that fit your needs.
- * When your component renders, `useHelloQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * To run a query within a React component, call `useAllSpellsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useAllSpellsQuery` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
  *
  * @example
- * const { data, loading, error } = useHelloQuery({
+ * const { data, loading, error } = useAllSpellsQuery({
  *   variables: {
+ *      limit: // value for 'limit'
+ *      nameCursor: // value for 'nameCursor'
+ *      lvlCursor: // value for 'lvlCursor'
  *   },
  * });
  */
-export function useHelloQuery(baseOptions?: Apollo.QueryHookOptions<HelloQuery, HelloQueryVariables>) {
+export function useAllSpellsQuery(baseOptions: Apollo.QueryHookOptions<AllSpellsQuery, AllSpellsQueryVariables> & ({ variables: AllSpellsQueryVariables; skip?: boolean; } | { skip: boolean; }) ) {
         const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<HelloQuery, HelloQueryVariables>(HelloDocument, options);
+        return Apollo.useQuery<AllSpellsQuery, AllSpellsQueryVariables>(AllSpellsDocument, options);
       }
-export function useHelloLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<HelloQuery, HelloQueryVariables>) {
+export function useAllSpellsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<AllSpellsQuery, AllSpellsQueryVariables>) {
           const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<HelloQuery, HelloQueryVariables>(HelloDocument, options);
+          return Apollo.useLazyQuery<AllSpellsQuery, AllSpellsQueryVariables>(AllSpellsDocument, options);
         }
-export function useHelloSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<HelloQuery, HelloQueryVariables>) {
+export function useAllSpellsSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<AllSpellsQuery, AllSpellsQueryVariables>) {
           const options = baseOptions === Apollo.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
-          return Apollo.useSuspenseQuery<HelloQuery, HelloQueryVariables>(HelloDocument, options);
+          return Apollo.useSuspenseQuery<AllSpellsQuery, AllSpellsQueryVariables>(AllSpellsDocument, options);
         }
-export type HelloQueryHookResult = ReturnType<typeof useHelloQuery>;
-export type HelloLazyQueryHookResult = ReturnType<typeof useHelloLazyQuery>;
-export type HelloSuspenseQueryHookResult = ReturnType<typeof useHelloSuspenseQuery>;
-export type HelloQueryResult = Apollo.QueryResult<HelloQuery, HelloQueryVariables>;
+export type AllSpellsQueryHookResult = ReturnType<typeof useAllSpellsQuery>;
+export type AllSpellsLazyQueryHookResult = ReturnType<typeof useAllSpellsLazyQuery>;
+export type AllSpellsSuspenseQueryHookResult = ReturnType<typeof useAllSpellsSuspenseQuery>;
+export type AllSpellsQueryResult = Apollo.QueryResult<AllSpellsQuery, AllSpellsQueryVariables>;
+export const ClericSpellsDocument = gql`
+    query ClericSpells($limit: Float!, $lvlCursor: Float, $nameCursor: String) {
+  clericSpells(limit: $limit, lvlCursor: $lvlCursor, nameCursor: $nameCursor) {
+    spells {
+      id
+      level
+      name
+      school
+      class
+      verbal
+      somatic
+      material
+      materials
+      range
+      aoe
+      castingTime
+      duration
+      savingThrow
+      damage
+      description
+      source
+      spheres
+    }
+    hasMore
+  }
+}
+    `;
+
+/**
+ * __useClericSpellsQuery__
+ *
+ * To run a query within a React component, call `useClericSpellsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useClericSpellsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useClericSpellsQuery({
+ *   variables: {
+ *      limit: // value for 'limit'
+ *      lvlCursor: // value for 'lvlCursor'
+ *      nameCursor: // value for 'nameCursor'
+ *   },
+ * });
+ */
+export function useClericSpellsQuery(baseOptions: Apollo.QueryHookOptions<ClericSpellsQuery, ClericSpellsQueryVariables> & ({ variables: ClericSpellsQueryVariables; skip?: boolean; } | { skip: boolean; }) ) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<ClericSpellsQuery, ClericSpellsQueryVariables>(ClericSpellsDocument, options);
+      }
+export function useClericSpellsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ClericSpellsQuery, ClericSpellsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<ClericSpellsQuery, ClericSpellsQueryVariables>(ClericSpellsDocument, options);
+        }
+export function useClericSpellsSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<ClericSpellsQuery, ClericSpellsQueryVariables>) {
+          const options = baseOptions === Apollo.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
+          return Apollo.useSuspenseQuery<ClericSpellsQuery, ClericSpellsQueryVariables>(ClericSpellsDocument, options);
+        }
+export type ClericSpellsQueryHookResult = ReturnType<typeof useClericSpellsQuery>;
+export type ClericSpellsLazyQueryHookResult = ReturnType<typeof useClericSpellsLazyQuery>;
+export type ClericSpellsSuspenseQueryHookResult = ReturnType<typeof useClericSpellsSuspenseQuery>;
+export type ClericSpellsQueryResult = Apollo.QueryResult<ClericSpellsQuery, ClericSpellsQueryVariables>;
 export const SpellByIdDocument = gql`
     query SpellByID($id: Int!) {
   spellByID(id: $id) {
@@ -270,14 +399,9 @@ export type SpellByIdQueryHookResult = ReturnType<typeof useSpellByIdQuery>;
 export type SpellByIdLazyQueryHookResult = ReturnType<typeof useSpellByIdLazyQuery>;
 export type SpellByIdSuspenseQueryHookResult = ReturnType<typeof useSpellByIdSuspenseQuery>;
 export type SpellByIdQueryResult = Apollo.QueryResult<SpellByIdQuery, SpellByIdQueryVariables>;
-export const SpellsDocument = gql`
-    query Spells($nameCursor: String, $lvlCursor: Float, $limit: Float!, $castingClass: String) {
-  spells(
-    nameCursor: $nameCursor
-    lvlCursor: $lvlCursor
-    limit: $limit
-    castingClass: $castingClass
-  ) {
+export const WizardSpellsDocument = gql`
+    query WizardSpells($limit: Float!, $nameCursor: String, $lvlCursor: Float) {
+  wizardSpells(limit: $limit, nameCursor: $nameCursor, lvlCursor: $lvlCursor) {
     hasMore
     spells {
       id
@@ -295,6 +419,7 @@ export const SpellsDocument = gql`
       duration
       savingThrow
       damage
+      description
       source
       spheres
     }
@@ -303,37 +428,36 @@ export const SpellsDocument = gql`
     `;
 
 /**
- * __useSpellsQuery__
+ * __useWizardSpellsQuery__
  *
- * To run a query within a React component, call `useSpellsQuery` and pass it any options that fit your needs.
- * When your component renders, `useSpellsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * To run a query within a React component, call `useWizardSpellsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useWizardSpellsQuery` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
  *
  * @example
- * const { data, loading, error } = useSpellsQuery({
+ * const { data, loading, error } = useWizardSpellsQuery({
  *   variables: {
+ *      limit: // value for 'limit'
  *      nameCursor: // value for 'nameCursor'
  *      lvlCursor: // value for 'lvlCursor'
- *      limit: // value for 'limit'
- *      castingClass: // value for 'castingClass'
  *   },
  * });
  */
-export function useSpellsQuery(baseOptions: Apollo.QueryHookOptions<SpellsQuery, SpellsQueryVariables> & ({ variables: SpellsQueryVariables; skip?: boolean; } | { skip: boolean; }) ) {
+export function useWizardSpellsQuery(baseOptions: Apollo.QueryHookOptions<WizardSpellsQuery, WizardSpellsQueryVariables> & ({ variables: WizardSpellsQueryVariables; skip?: boolean; } | { skip: boolean; }) ) {
         const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<SpellsQuery, SpellsQueryVariables>(SpellsDocument, options);
+        return Apollo.useQuery<WizardSpellsQuery, WizardSpellsQueryVariables>(WizardSpellsDocument, options);
       }
-export function useSpellsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<SpellsQuery, SpellsQueryVariables>) {
+export function useWizardSpellsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<WizardSpellsQuery, WizardSpellsQueryVariables>) {
           const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<SpellsQuery, SpellsQueryVariables>(SpellsDocument, options);
+          return Apollo.useLazyQuery<WizardSpellsQuery, WizardSpellsQueryVariables>(WizardSpellsDocument, options);
         }
-export function useSpellsSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<SpellsQuery, SpellsQueryVariables>) {
+export function useWizardSpellsSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<WizardSpellsQuery, WizardSpellsQueryVariables>) {
           const options = baseOptions === Apollo.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
-          return Apollo.useSuspenseQuery<SpellsQuery, SpellsQueryVariables>(SpellsDocument, options);
+          return Apollo.useSuspenseQuery<WizardSpellsQuery, WizardSpellsQueryVariables>(WizardSpellsDocument, options);
         }
-export type SpellsQueryHookResult = ReturnType<typeof useSpellsQuery>;
-export type SpellsLazyQueryHookResult = ReturnType<typeof useSpellsLazyQuery>;
-export type SpellsSuspenseQueryHookResult = ReturnType<typeof useSpellsSuspenseQuery>;
-export type SpellsQueryResult = Apollo.QueryResult<SpellsQuery, SpellsQueryVariables>;
+export type WizardSpellsQueryHookResult = ReturnType<typeof useWizardSpellsQuery>;
+export type WizardSpellsLazyQueryHookResult = ReturnType<typeof useWizardSpellsLazyQuery>;
+export type WizardSpellsSuspenseQueryHookResult = ReturnType<typeof useWizardSpellsSuspenseQuery>;
+export type WizardSpellsQueryResult = Apollo.QueryResult<WizardSpellsQuery, WizardSpellsQueryVariables>;

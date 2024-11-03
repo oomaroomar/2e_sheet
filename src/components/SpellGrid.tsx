@@ -1,44 +1,29 @@
 import SuccinctSpell from '@/components/SuccinctSpell'
-import { CastingClass } from '@/lib/types'
-import { useContext, useTransition, useState, useEffect } from "react"
+import { SpellLite } from '@/lib/types'
+import { useContext} from "react"
 import { FilterContext, FilterContextType } from "@/context/FilterContext"
-import { useSpellsQuery } from '@/gql/graphql'
 import { DescriptionListContext, DescriptionListContextType } from '@/context/DescriptionListContext'
 
 
 interface SpellListProps {
-    // blur: boolean
-    castingClass: CastingClass | null
+    spells: SpellLite[]
+    loading: boolean
 }
 
-export default function SpellGrid({castingClass}: SpellListProps) {
-    const [, startTransition] = useTransition()
-    const [done, setDone] = useState<boolean>(false)
+export default function SpellGrid({spells}: SpellListProps) {
     const filter = useContext(FilterContext) as FilterContextType
-    const {data, fetchMore, loading} = useSpellsQuery({variables: {limit: 100, lvlCursor: null, nameCursor: null, castingClass}})
+    // Added pagination but in retrospect doesn't seem to make sense. Maybe will need later
     const {addSpell} = useContext(DescriptionListContext) as DescriptionListContextType
 
-    // most retarded pagination known to man but unironically works here maybe once apollo fixes their networkStatus thing
-    // (or i learn to use it) i'll change to something more sophisticated
-    useEffect(() => {
-        if(!loading && !done) {
-            setDone(true)
-            startTransition(() => {
-                fetchMore({
-                    variables: {
-                        limit: 254740991, // some big number that isn't too big to destroy everything
-                        lvlCursor: data!.spells.spells[data!.spells.spells.length-1].level,
-                        nameCursor: data!.spells.spells[data!.spells.spells.length-1].name,
-                        castingClass
-                    }
-                })
-            })
-        }
-    },[done, setDone, fetchMore, startTransition, data, loading, castingClass])
-
-    if(loading) return <div>loading</div>
-
     return <div className={`flex flex-wrap w-full overflow-auto flex-1`} >
-        {data!.spells.spells.map(spell => filter.runFilters(spell) ? <SuccinctSpell key={spell.id} spell={spell} inspectSpell={addSpell} /> : '')} 
+        {spells.map(spell => filter.runFilters(spell) ? <SuccinctSpell key={spell.id} spell={spell} inspectSpell={addSpell} /> : '')} 
+    </div>
+}
+
+export function LoadingGrid() {
+    return <div className="text-center h-full text-7xl text-slate-300 flex place-content-center place-items-center" >
+    <div className="pb-60">
+            loading
+        </div>
     </div>
 }

@@ -13,6 +13,7 @@
     "@apollo/client": "^3.11.8",
     "@urql/exchange-graphcache": "^7.2.1",
     "@urql/next": "^1.1.2",
+    "formik": "^2.4.6",
     "fuse.js": "^7.0.0",
     "graphql": "^16.9.0",
     "graphql-tag": "^2.12.6",

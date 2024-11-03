@@ -3,34 +3,22 @@ import { FormEvent, useCallback, useContext, useEffect, useRef, useState, useTra
 import Fuse from 'fuse.js'
 import SearchResult from "./SearchResult"
 import { Spell } from "@/lib/types"
-import { SpellsDocument, SpellsQuery } from "@/gql/graphql"
-import { apolloCache } from "@/lib/apolloClient"
 import { FilterContext, FilterContextType } from "@/context/FilterContext"
 import { DescriptionListContext, DescriptionListContextType } from "@/context/DescriptionListContext"
 
 interface SearchModalProps {
     showModal: boolean
     setModalState: (ns: boolean) => void
+    spells: Spell[]
 }
 
-export default function SearchModal({showModal, setModalState}:SearchModalProps) {
+export default function SearchModal({showModal, setModalState, spells}:SearchModalProps) {
 
     const modalRef = useRef<HTMLInputElement>(null)
     const [searchPattern, setSearchPattern] = useState<string>('')
     const filters = useContext(FilterContext) as FilterContextType
     const [, startTransition] = useTransition()
     const {addSpell} = useContext(DescriptionListContext) as DescriptionListContextType
-
-
-    const spellsQuery = apolloCache.readQuery({
-        query: SpellsDocument,
-        variables: {
-            nameCursor: '',
-            lvlCursor: 1,
-            limit: 254740991
-        }
-    }) as SpellsQuery
-
 
     const handleKeyPress = useCallback((event: KeyboardEvent) => {
         if(event.key === 'Escape') {
@@ -56,9 +44,8 @@ export default function SearchModal({showModal, setModalState}:SearchModalProps)
         }
     }, [showModal, setModalState, handleKeyPress, modalRef])
 
-    if(!showModal || spellsQuery === null) return null
+    if(!showModal) return null
 
-    const spells = spellsQuery.spells.spells
     filters.runFilters(spells[0] as Spell)
 
     const fuse = new Fuse(spells, {keys: ['name']})
