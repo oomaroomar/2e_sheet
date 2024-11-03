@@ -14,7 +14,25 @@ const config: Config = {
     "bg-Enchantment",
     "bg-Evocation",
     "bg-Illusion",
-    "bg-Necromancy"
+    "bg-Necromancy",
+    "bg-Wizard",
+    "bg-Cleric",
+    "shadow-Abjuration",
+    "shadow-Alteration",
+    "shadow-Conjuration",
+    "shadow-Divination",
+    "shadow-Enchantment",
+    "shadow-Evocation",
+    "shadow-Illusion",
+    "shadow-Necromancy",
+    "hover:shadow-Abjuration",
+    "hover:shadow-Alteration",
+    "hover:shadow-Conjuration",
+    "hover:shadow-Divination",
+    "hover:shadow-Enchantment",
+    "hover:shadow-Evocation",
+    "hover:shadow-Illusion",
+    "hover:shadow-Necromancy",
   ],
   theme: {
     extend: {
@@ -27,6 +45,8 @@ const config: Config = {
         Evocation: '#CC0000',
         Illusion: '#674EA7',
         Necromancy: '#666666',
+        Wizard: '#6A3190',
+        Cleric: '#f0e637'
       },
       spacing: {
         '12vh': '12vh',

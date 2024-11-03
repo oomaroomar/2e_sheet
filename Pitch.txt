@@ -1,0 +1,8 @@
+
+
+RANT:
+
+Super unorganized data:
+Range 0 has options: 0, self, touch
+Casting time 1 round has options: 1 round, 1 rd.
+Even casting time 1 has options: 1 and 1(space)

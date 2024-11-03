@@ -7,22 +7,24 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "gen": "graphql-codegen --config codegen.ts"
+    "gen": "graphql-codegen --config codegen.yaml"
   },
   "dependencies": {
     "@apollo/client": "^3.11.8",
+    "@urql/exchange-graphcache": "^7.2.1",
     "@urql/next": "^1.1.2",
+    "formik": "^2.4.6",
     "fuse.js": "^7.0.0",
     "graphql": "^16.9.0",
     "graphql-tag": "^2.12.6",
-    "next": "14.2.15",
+    "next": "^15.0.2",
     "react": "^18",
     "react-dom": "^18",
     "urql": "^4.2.0"
   },
   "devDependencies": {
     "@graphql-codegen/cli": "^5.0.3",
-    "@graphql-codegen/client-preset": "4.4.0",
+    "@graphql-codegen/client-preset": "^4.4.0",
     "@graphql-codegen/import-types-preset": "^3.0.0",
     "@graphql-codegen/near-operation-file-preset": "^3.0.0",
     "@graphql-codegen/typescript": "^4.1.0",
