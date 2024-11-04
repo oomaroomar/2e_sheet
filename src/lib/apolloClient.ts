@@ -1,5 +1,5 @@
 import { PaginatedSpells } from "@/gql/graphql";
-import { InMemoryCache, ApolloClient } from "@apollo/client";
+import { InMemoryCache, ApolloClient, createHttpLink } from "@apollo/client";
 
 export const apolloCache = new InMemoryCache({
     typePolicies: {
@@ -19,8 +19,12 @@ export const apolloCache = new InMemoryCache({
       }
     }
   })
-  
+const link = createHttpLink({
+  uri: 'http://localhost:4000/graphql',
+  credentials: 'include'
+})
 export const apolloClient = new ApolloClient({
     uri: 'http://localhost:4000/graphql',
     cache: apolloCache,
+    link
 });
