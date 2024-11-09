@@ -42,7 +42,7 @@ export default function Navbar({setSearchModalState, setSpecModalState, casterCl
     }, [showLeftMenu, toggleLeftMenu])
 
     return <div className="hidden z-40 w-full lg:block" >
-        <div ref={ref} className={`${showLeftMenu ? '' : 'hidden'} absolute pt-6 h-screen w-64 bg-slate-100 text-xl shadow-lg gap-4`}>
+        <div ref={ref} className={`${showLeftMenu ? '' : '-translate-x-64 opacity-0'} transition-all absolute pt-6 h-screen w-64 bg-white opacity-90 text-xl shadow-lg gap-4`}>
             <LeftMenu/>
         </div>
      <div className={`w-full flex flex-row gap-2 ${showFilters ?  '' : 'border-b'} border-slate-900/10 p-2`} >

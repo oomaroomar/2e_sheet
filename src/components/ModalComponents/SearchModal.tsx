@@ -2,14 +2,14 @@ import Magnifier from "@/svgs/Magnifier"
 import { FormEvent, useCallback, useContext, useEffect, useRef, useState, useTransition } from "react"
 import Fuse from 'fuse.js'
 import SearchResult from "./SearchResult"
-import { Spell } from "@/lib/types"
+import { Spell, SpellLite } from "@/lib/types"
 import { FilterContext, FilterContextType } from "@/context/FilterContext"
 import { DescriptionListContext, DescriptionListContextType } from "@/context/DescriptionListContext"
 
 interface SearchModalProps {
     showModal: boolean
     setModalState: (ns: boolean) => void
-    spells: Spell[]
+    spells: SpellLite[]
 }
 
 export default function SearchModal({showModal, setModalState, spells}:SearchModalProps) {

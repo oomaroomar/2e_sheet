@@ -1,25 +1,8 @@
 query ClericSpells($limit: Float!, $lvlCursor: Float, $nameCursor: String) {
   clericSpells(limit: $limit, lvlCursor: $lvlCursor, nameCursor: $nameCursor) {
-    spells {
-      id
-      level
-      name
-      school
-      class
-      verbal
-      somatic
-      material
-      materials
-      range
-      aoe
-      castingTime
-      duration
-      savingThrow
-      damage
-      description
-      source
-      spheres
-    }
     hasMore
+    spells {
+    ...SpellLiteInfo
+    }
   }
 }

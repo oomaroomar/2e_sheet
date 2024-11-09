@@ -1,0 +1,26 @@
+query MyCharacters {
+  myCharacters {
+    id
+    spellBooks {
+      id
+      spellPages {
+        pages
+        spell {
+          ...SpellLiteInfo
+        }
+      }
+      name
+      maxPages
+      pagesLeft
+      owner {
+        name
+      }
+    }
+    name
+    learnedSpells {
+      spell {
+        ...SpellLiteInfo
+      }
+    }
+  }
+}

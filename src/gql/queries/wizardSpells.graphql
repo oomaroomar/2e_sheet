@@ -2,24 +2,7 @@ query WizardSpells($limit: Float!, $nameCursor: String, $lvlCursor: Float) {
   wizardSpells(limit: $limit, nameCursor: $nameCursor, lvlCursor: $lvlCursor) {
     hasMore
     spells {
-      id
-      level
-      name
-      school
-      class
-      verbal
-      somatic
-      material
-      materials
-      range
-      aoe
-      castingTime
-      duration
-      savingThrow
-      damage
-      description
-      source
-      spheres
+    ...SpellLiteInfo
     }
   }
 }

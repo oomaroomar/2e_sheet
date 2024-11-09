@@ -1,46 +1,24 @@
-import Link from 'next/link'
+import LeftmenuItem from './LeftmenuItem'
+import Section from './LeftmenuSection'
 
 export default function LeftMenu() {
     return <div>
-    <ul className="space-y-2 font-medium">
-        <li>
-            <Link className="flex items-center p-2 rounded-lg" href="/">
-             <span className="ms-3">Home</span>
-            </Link>
-        </li>
-        <li>
-        <Link className="flex items-center p-2 rounded-lg" href="/spells">
-             <span className="ms-3">All spells</span>
-        </Link>
-        </li>
-        <li>
-        <Link className="flex items-center p-2 rounded-lg" href="/spells/priest">
-             <span className="ms-3">Cleric spells</span>
-        </Link>
-        </li>
-        <li>
-        <Link className="flex items-center p-2 rounded-lg" href="/spells/wizard">
-             <span className="ms-3">Wizard spells</span>
-        </Link>
-        </li>
-        
+    <ul className="space-y-2 font-medium transition-transform">
+          <LeftmenuItem href="/" text="Home" />
+          <LeftmenuItem href="/spells" text="All spells" />
+          <LeftmenuItem href="/spells/priest" text="Cleric spells" />
+          <LeftmenuItem href="/spells/wizard" text="Wizard spells" />
     </ul>
-    <ul className="pt-4 mt-4 space-y-2 font-medium border-t border-gray-200">
-        <li>
-        <Link className="flex items-center p-2 rounded-lg" href="/admin">
-             <span className="ms-3">Admin</span>
-        </Link>
-        </li>
-        <li>
-        <Link className="flex items-center p-2 rounded-lg" href="/spells/wizard">
-             <span className="ms-3">Log in</span>
-        </Link>
-        </li>
-        <li><Link className="flex items-center p-2 rounded-lg" href="/spells/wizard">
-             <span className="ms-3">Sign up</span>
-        </Link>
-        </li>
-    </ul>
+    <Section>
+          <LeftmenuItem href="/" text="Characters" />
+          <LeftmenuItem href="/user/login" text="Spellbooks" />
+    </Section>
+    <Section>
+          <LeftmenuItem href="/" text="Admin" />
+          <LeftmenuItem href="/user/login" text="Settings" />
+          <LeftmenuItem href="/user/login" text="Log in" />
+          <LeftmenuItem href="/user/register" text="Sign up" />
+    </Section>
     </div>
 
 }
