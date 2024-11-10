@@ -1,0 +1,9 @@
+mutation CreateSpellBook($maxPages: Float!, $charId: Float!, $name: String!) {
+  createSpellBook(maxPages: $maxPages, charId: $charId, name: $name) {
+    spellBook {
+      id
+      name
+    }
+    errors
+  }
+}

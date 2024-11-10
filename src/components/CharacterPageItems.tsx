@@ -4,33 +4,30 @@ import SmileyFace from "@/svgs/SmileyFace"
 interface CharItemProps {
     text: string
     onClick: () => void
+    selected: boolean
 }
 interface ItemProps {
     text: string
+    onClick: () => void
+    selected: boolean
 }
 
-export function CharacterItem({text, onClick}: CharItemProps) {
-return <li className="items-center rounded-xl p-2 hover:shadow-sm hover:shadow-gray-400
-  hover:text-indigo-600 grid grid-cols-2 w-48 gap-2 border border-gray-200">
-    <div className="col-span-2 flex flex-col place-items-center justify-items-center">
+export function CharacterItem({text, onClick, selected}: CharItemProps) {
+return <li className={`items-center hover:cursor-pointer rounded-xl p-2 hover:shadow-sm hover:shadow-gray-400
+  grid grid-cols-2 w-48 gap-2 border border-gray-200 ${selected ? 'text-indigo-600' : 'shadow-indigo-600'}`}>
+    <div onClick={onClick} className="col-span-2 flex flex-col place-items-center justify-items-center">
         <SmileyFace h="100" />
-        <span className="ms-3 text-3xl">{text}</span>
+        <span className="ms-3 text-2xl">{text}</span>
     </div>
-    <button onClick={onClick}  className="col-span-2 text-xl">view learned</button>
-    <button className="text-yellow-500">rename character</button>
-    <button className="text-red-800">delete character</button>
 </li>
 }
 
-export function BookItem({text}: ItemProps) {
-return <li className="items-center rounded-xl p-2 hover:shadow-sm hover:shadow-gray-400
-  hover:text-indigo-600 grid grid-cols-2 w-48 gap-2 border border-gray-200">
-    <div className="col-span-2 flex flex-col place-items-center justify-items-center">
+export function BookItem({text, onClick, selected}: ItemProps) {
+return <li className={`items-center hover:cursor-pointer rounded-xl p-2 hover:shadow-sm hover:shadow-gray-400
+  grid grid-cols-2 w-48 gap-2 border border-gray-200 ${selected ? 'text-indigo-600' : 'shadow-indigo-600'}`} >
+    <div onClick={onClick} className="col-span-2 flex flex-col place-items-center justify-items-center">
         <BookIcon h="100" />
         <span className="ms-3 text-3xl">{text}</span>
     </div>
-    <button className="col-span-2 text-xl">view learned</button>
-    <button className="text-yellow-500">rename character</button>
-    <button className="text-red-800">delete character</button>
 </li>
 }

@@ -39,13 +39,10 @@ export type FieldError = {
 
 export type LearnedSpell = {
   __typename?: 'LearnedSpell';
-  charId: Scalars['Float']['output'];
-  character: Character;
   createdAt: Scalars['String']['output'];
   failLvl?: Maybe<Scalars['Int']['output']>;
   learnLvl?: Maybe<Scalars['Int']['output']>;
   spell: Spell;
-  spellId: Scalars['Float']['output'];
   updatedAt: Scalars['String']['output'];
 };
 
@@ -257,11 +254,8 @@ export type SpellBook = {
   maxPages?: Maybe<Scalars['Int']['output']>;
   name: Scalars['String']['output'];
   owner: Character;
-  ownerId: Scalars['Float']['output'];
   pagesLeft: Scalars['Int']['output'];
   spellPages?: Maybe<SpellPage>;
-  userOwner: User;
-  userOwnerId: Scalars['Float']['output'];
 };
 
 export type SpellBookResponse = {
@@ -318,7 +312,6 @@ export type SpellInput = {
 export type SpellPage = {
   __typename?: 'SpellPage';
   book: SpellBook;
-  bookId: Scalars['Float']['output'];
   pages?: Maybe<Scalars['Int']['output']>;
   spell: Spell;
   spellId: Scalars['Float']['output'];
@@ -378,6 +371,15 @@ export type CreateCharacterMutationVariables = Exact<{
 
 export type CreateCharacterMutation = { __typename?: 'Mutation', createCharacter: { __typename?: 'CharacterResponse', error?: string | null, character?: { __typename?: 'Character', name: string, id: number } | null } };
 
+export type CreateSpellBookMutationVariables = Exact<{
+  maxPages: Scalars['Float']['input'];
+  charId: Scalars['Float']['input'];
+  name: Scalars['String']['input'];
+}>;
+
+
+export type CreateSpellBookMutation = { __typename?: 'Mutation', createSpellBook: { __typename?: 'SpellBookResponse', errors?: string | null, spellBook?: { __typename?: 'SpellBook', id: number, name: string } | null } };
+
 export type ForgotPasswordMutationVariables = Exact<{
   email: Scalars['String']['input'];
 }>;
@@ -422,6 +424,13 @@ export type ClericSpellsQueryVariables = Exact<{
 
 
 export type ClericSpellsQuery = { __typename?: 'Query', clericSpells: { __typename?: 'PaginatedSpells', hasMore: boolean, spells: Array<{ __typename?: 'Spell', id: number, level: number, name: string, school: string, class: string, verbal: boolean, somatic: boolean, material: boolean, materials: string, range: string, aoe: string, castingTime: string, duration: string, savingThrow: string, damage: string, source: string, spheres?: Array<string> | null }> } };
+
+export type CharacterQueryVariables = Exact<{
+  cId: Scalars['Float']['input'];
+}>;
+
+
+export type CharacterQuery = { __typename?: 'Query', character?: { __typename?: 'Character', learnedSpells: Array<{ __typename?: 'LearnedSpell', spell: { __typename?: 'Spell', id: number, level: number, name: string, school: string, class: string, verbal: boolean, somatic: boolean, material: boolean, materials: string, range: string, aoe: string, castingTime: string, duration: string, savingThrow: string, damage: string, source: string, spheres?: Array<string> | null } }> } | null };
 
 export type MeQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -570,6 +579,45 @@ export function useCreateCharacterMutation(baseOptions?: Apollo.MutationHookOpti
 export type CreateCharacterMutationHookResult = ReturnType<typeof useCreateCharacterMutation>;
 export type CreateCharacterMutationResult = Apollo.MutationResult<CreateCharacterMutation>;
 export type CreateCharacterMutationOptions = Apollo.BaseMutationOptions<CreateCharacterMutation, CreateCharacterMutationVariables>;
+export const CreateSpellBookDocument = gql`
+    mutation CreateSpellBook($maxPages: Float!, $charId: Float!, $name: String!) {
+  createSpellBook(maxPages: $maxPages, charId: $charId, name: $name) {
+    spellBook {
+      id
+      name
+    }
+    errors
+  }
+}
+    `;
+export type CreateSpellBookMutationFn = Apollo.MutationFunction<CreateSpellBookMutation, CreateSpellBookMutationVariables>;
+
+/**
+ * __useCreateSpellBookMutation__
+ *
+ * To run a mutation, you first call `useCreateSpellBookMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCreateSpellBookMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [createSpellBookMutation, { data, loading, error }] = useCreateSpellBookMutation({
+ *   variables: {
+ *      maxPages: // value for 'maxPages'
+ *      charId: // value for 'charId'
+ *      name: // value for 'name'
+ *   },
+ * });
+ */
+export function useCreateSpellBookMutation(baseOptions?: Apollo.MutationHookOptions<CreateSpellBookMutation, CreateSpellBookMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<CreateSpellBookMutation, CreateSpellBookMutationVariables>(CreateSpellBookDocument, options);
+      }
+export type CreateSpellBookMutationHookResult = ReturnType<typeof useCreateSpellBookMutation>;
+export type CreateSpellBookMutationResult = Apollo.MutationResult<CreateSpellBookMutation>;
+export type CreateSpellBookMutationOptions = Apollo.BaseMutationOptions<CreateSpellBookMutation, CreateSpellBookMutationVariables>;
 export const ForgotPasswordDocument = gql`
     mutation ForgotPassword($email: String!) {
   forgotPassword(email: $email)
@@ -802,6 +850,50 @@ export type ClericSpellsQueryHookResult = ReturnType<typeof useClericSpellsQuery
 export type ClericSpellsLazyQueryHookResult = ReturnType<typeof useClericSpellsLazyQuery>;
 export type ClericSpellsSuspenseQueryHookResult = ReturnType<typeof useClericSpellsSuspenseQuery>;
 export type ClericSpellsQueryResult = Apollo.QueryResult<ClericSpellsQuery, ClericSpellsQueryVariables>;
+export const CharacterDocument = gql`
+    query Character($cId: Float!) {
+  character(cId: $cId) {
+    learnedSpells {
+      spell {
+        ...SpellLiteInfo
+      }
+    }
+  }
+}
+    ${SpellLiteInfoFragmentDoc}`;
+
+/**
+ * __useCharacterQuery__
+ *
+ * To run a query within a React component, call `useCharacterQuery` and pass it any options that fit your needs.
+ * When your component renders, `useCharacterQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useCharacterQuery({
+ *   variables: {
+ *      cId: // value for 'cId'
+ *   },
+ * });
+ */
+export function useCharacterQuery(baseOptions: Apollo.QueryHookOptions<CharacterQuery, CharacterQueryVariables> & ({ variables: CharacterQueryVariables; skip?: boolean; } | { skip: boolean; }) ) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<CharacterQuery, CharacterQueryVariables>(CharacterDocument, options);
+      }
+export function useCharacterLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<CharacterQuery, CharacterQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<CharacterQuery, CharacterQueryVariables>(CharacterDocument, options);
+        }
+export function useCharacterSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<CharacterQuery, CharacterQueryVariables>) {
+          const options = baseOptions === Apollo.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
+          return Apollo.useSuspenseQuery<CharacterQuery, CharacterQueryVariables>(CharacterDocument, options);
+        }
+export type CharacterQueryHookResult = ReturnType<typeof useCharacterQuery>;
+export type CharacterLazyQueryHookResult = ReturnType<typeof useCharacterLazyQuery>;
+export type CharacterSuspenseQueryHookResult = ReturnType<typeof useCharacterSuspenseQuery>;
+export type CharacterQueryResult = Apollo.QueryResult<CharacterQuery, CharacterQueryVariables>;
 export const MeDocument = gql`
     query Me {
   me {

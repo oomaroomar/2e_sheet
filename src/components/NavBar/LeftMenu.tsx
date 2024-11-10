@@ -10,7 +10,7 @@ export default function LeftMenu() {
           <LeftmenuItem href="/spells/wizard" text="Wizard spells" />
     </ul>
     <Section>
-          <LeftmenuItem href="/" text="Characters" />
+          <LeftmenuItem href="/characters" text="Characters" />
           <LeftmenuItem href="/user/login" text="Spellbooks" />
     </Section>
     <Section>
