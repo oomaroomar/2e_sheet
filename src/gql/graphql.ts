@@ -178,6 +178,7 @@ export type Query = {
   myCharacters?: Maybe<Array<Character>>;
   mySpellBooks: Array<SpellBook>;
   spellByID: Spell;
+  spellbook: SpellBook;
   spellsByName: Array<Spell>;
   wizardSpells: PaginatedSpells;
 };
@@ -209,6 +210,11 @@ export type QueryMySpellBooksArgs = {
 
 export type QuerySpellByIdArgs = {
   id: Scalars['Int']['input'];
+};
+
+
+export type QuerySpellbookArgs = {
+  bookId: Scalars['Float']['input'];
 };
 
 
@@ -255,7 +261,7 @@ export type SpellBook = {
   name: Scalars['String']['output'];
   owner: Character;
   pagesLeft: Scalars['Int']['output'];
-  spellPages?: Maybe<SpellPage>;
+  spellPages?: Maybe<Array<SpellPage>>;
 };
 
 export type SpellBookResponse = {
@@ -387,6 +393,14 @@ export type ForgotPasswordMutationVariables = Exact<{
 
 export type ForgotPasswordMutation = { __typename?: 'Mutation', forgotPassword: boolean };
 
+export type LearnSpellMutationVariables = Exact<{
+  characterId: Scalars['Float']['input'];
+  spellId: Scalars['Float']['input'];
+}>;
+
+
+export type LearnSpellMutation = { __typename?: 'Mutation', learnSpell: { __typename?: 'CharacterResponse', error?: string | null, character?: { __typename?: 'Character', id: number, learnedSpells: Array<{ __typename?: 'LearnedSpell', spell: { __typename?: 'Spell', id: number, level: number, name: string, school: string, class: string, verbal: boolean, somatic: boolean, material: boolean, materials: string, range: string, aoe: string, castingTime: string, duration: string, savingThrow: string, damage: string, source: string, spheres?: Array<string> | null } }> } | null } };
+
 export type LoginMutationVariables = Exact<{
   password: Scalars['String']['input'];
   usernameOrEmail: Scalars['String']['input'];
@@ -406,6 +420,13 @@ export type RegisterMutationVariables = Exact<{
 
 
 export type RegisterMutation = { __typename?: 'Mutation', register: { __typename?: 'UserResponse', user?: { __typename?: 'User', username?: string | null, id: number } | null, errors?: Array<{ __typename?: 'FieldError', field: string, message: string }> | null } };
+
+export type WriteSpellMutationVariables = Exact<{
+  input: WriteSpellInput;
+}>;
+
+
+export type WriteSpellMutation = { __typename?: 'Mutation', writeSpell: { __typename?: 'SpellPageResponse', error?: string | null, spellPage?: { __typename?: 'SpellPage', spellId: number } | null } };
 
 export type AllSpellsQueryVariables = Exact<{
   limit: Scalars['Float']['input'];
@@ -440,7 +461,7 @@ export type MeQuery = { __typename?: 'Query', me?: { __typename?: 'User', userna
 export type MyCharactersQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type MyCharactersQuery = { __typename?: 'Query', myCharacters?: Array<{ __typename?: 'Character', id: number, name: string, spellBooks?: Array<{ __typename?: 'SpellBook', id: number, name: string, maxPages?: number | null, pagesLeft: number, spellPages?: { __typename?: 'SpellPage', pages?: number | null, spell: { __typename?: 'Spell', id: number, level: number, name: string, school: string, class: string, verbal: boolean, somatic: boolean, material: boolean, materials: string, range: string, aoe: string, castingTime: string, duration: string, savingThrow: string, damage: string, source: string, spheres?: Array<string> | null } } | null, owner: { __typename?: 'Character', name: string } }> | null, learnedSpells: Array<{ __typename?: 'LearnedSpell', spell: { __typename?: 'Spell', id: number, level: number, name: string, school: string, class: string, verbal: boolean, somatic: boolean, material: boolean, materials: string, range: string, aoe: string, castingTime: string, duration: string, savingThrow: string, damage: string, source: string, spheres?: Array<string> | null } }> }> | null };
+export type MyCharactersQuery = { __typename?: 'Query', myCharacters?: Array<{ __typename?: 'Character', id: number, name: string, spellBooks?: Array<{ __typename?: 'SpellBook', id: number, name: string, maxPages?: number | null, pagesLeft: number, spellPages?: Array<{ __typename?: 'SpellPage', pages?: number | null, spell: { __typename?: 'Spell', id: number, level: number, name: string, school: string, class: string, verbal: boolean, somatic: boolean, material: boolean, materials: string, range: string, aoe: string, castingTime: string, duration: string, savingThrow: string, damage: string, source: string, spheres?: Array<string> | null } }> | null, owner: { __typename?: 'Character', name: string } }> | null, learnedSpells: Array<{ __typename?: 'LearnedSpell', spell: { __typename?: 'Spell', id: number, level: number, name: string, school: string, class: string, verbal: boolean, somatic: boolean, material: boolean, materials: string, range: string, aoe: string, castingTime: string, duration: string, savingThrow: string, damage: string, source: string, spheres?: Array<string> | null } }> }> | null };
 
 export type SpellByIdQueryVariables = Exact<{
   id: Scalars['Int']['input'];
@@ -448,6 +469,13 @@ export type SpellByIdQueryVariables = Exact<{
 
 
 export type SpellByIdQuery = { __typename?: 'Query', spellByID: { __typename?: 'Spell', id: number, level: number, name: string, school: string, class: string, verbal: boolean, somatic: boolean, material: boolean, materials: string, range: string, aoe: string, castingTime: string, duration: string, savingThrow: string, damage: string, description: string, source: string, spheres?: Array<string> | null } };
+
+export type SpellbookQueryVariables = Exact<{
+  bookId: Scalars['Float']['input'];
+}>;
+
+
+export type SpellbookQuery = { __typename?: 'Query', spellbook: { __typename?: 'SpellBook', maxPages?: number | null, name: string, pagesLeft: number, spellPages?: Array<{ __typename?: 'SpellPage', spell: { __typename?: 'Spell', id: number, level: number, name: string, school: string, class: string, verbal: boolean, somatic: boolean, material: boolean, materials: string, range: string, aoe: string, castingTime: string, duration: string, savingThrow: string, damage: string, source: string, spheres?: Array<string> | null } }> | null } };
 
 export type WizardSpellsQueryVariables = Exact<{
   limit: Scalars['Float']['input'];
@@ -649,6 +677,48 @@ export function useForgotPasswordMutation(baseOptions?: Apollo.MutationHookOptio
 export type ForgotPasswordMutationHookResult = ReturnType<typeof useForgotPasswordMutation>;
 export type ForgotPasswordMutationResult = Apollo.MutationResult<ForgotPasswordMutation>;
 export type ForgotPasswordMutationOptions = Apollo.BaseMutationOptions<ForgotPasswordMutation, ForgotPasswordMutationVariables>;
+export const LearnSpellDocument = gql`
+    mutation LearnSpell($characterId: Float!, $spellId: Float!) {
+  learnSpell(characterId: $characterId, spellId: $spellId) {
+    character {
+      id
+      learnedSpells {
+        spell {
+          ...SpellLiteInfo
+        }
+      }
+    }
+    error
+  }
+}
+    ${SpellLiteInfoFragmentDoc}`;
+export type LearnSpellMutationFn = Apollo.MutationFunction<LearnSpellMutation, LearnSpellMutationVariables>;
+
+/**
+ * __useLearnSpellMutation__
+ *
+ * To run a mutation, you first call `useLearnSpellMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useLearnSpellMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [learnSpellMutation, { data, loading, error }] = useLearnSpellMutation({
+ *   variables: {
+ *      characterId: // value for 'characterId'
+ *      spellId: // value for 'spellId'
+ *   },
+ * });
+ */
+export function useLearnSpellMutation(baseOptions?: Apollo.MutationHookOptions<LearnSpellMutation, LearnSpellMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<LearnSpellMutation, LearnSpellMutationVariables>(LearnSpellDocument, options);
+      }
+export type LearnSpellMutationHookResult = ReturnType<typeof useLearnSpellMutation>;
+export type LearnSpellMutationResult = Apollo.MutationResult<LearnSpellMutation>;
+export type LearnSpellMutationOptions = Apollo.BaseMutationOptions<LearnSpellMutation, LearnSpellMutationVariables>;
 export const LoginDocument = gql`
     mutation Login($password: String!, $usernameOrEmail: String!) {
   login(password: $password, usernameOrEmail: $usernameOrEmail) {
@@ -760,6 +830,42 @@ export function useRegisterMutation(baseOptions?: Apollo.MutationHookOptions<Reg
 export type RegisterMutationHookResult = ReturnType<typeof useRegisterMutation>;
 export type RegisterMutationResult = Apollo.MutationResult<RegisterMutation>;
 export type RegisterMutationOptions = Apollo.BaseMutationOptions<RegisterMutation, RegisterMutationVariables>;
+export const WriteSpellDocument = gql`
+    mutation WriteSpell($input: WriteSpellInput!) {
+  writeSpell(input: $input) {
+    error
+    spellPage {
+      spellId
+    }
+  }
+}
+    `;
+export type WriteSpellMutationFn = Apollo.MutationFunction<WriteSpellMutation, WriteSpellMutationVariables>;
+
+/**
+ * __useWriteSpellMutation__
+ *
+ * To run a mutation, you first call `useWriteSpellMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useWriteSpellMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [writeSpellMutation, { data, loading, error }] = useWriteSpellMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useWriteSpellMutation(baseOptions?: Apollo.MutationHookOptions<WriteSpellMutation, WriteSpellMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<WriteSpellMutation, WriteSpellMutationVariables>(WriteSpellDocument, options);
+      }
+export type WriteSpellMutationHookResult = ReturnType<typeof useWriteSpellMutation>;
+export type WriteSpellMutationResult = Apollo.MutationResult<WriteSpellMutation>;
+export type WriteSpellMutationOptions = Apollo.BaseMutationOptions<WriteSpellMutation, WriteSpellMutationVariables>;
 export const AllSpellsDocument = gql`
     query AllSpells($limit: Float!, $nameCursor: String, $lvlCursor: Float) {
   allSpells(limit: $limit, nameCursor: $nameCursor, lvlCursor: $lvlCursor) {
@@ -1034,6 +1140,53 @@ export type SpellByIdQueryHookResult = ReturnType<typeof useSpellByIdQuery>;
 export type SpellByIdLazyQueryHookResult = ReturnType<typeof useSpellByIdLazyQuery>;
 export type SpellByIdSuspenseQueryHookResult = ReturnType<typeof useSpellByIdSuspenseQuery>;
 export type SpellByIdQueryResult = Apollo.QueryResult<SpellByIdQuery, SpellByIdQueryVariables>;
+export const SpellbookDocument = gql`
+    query Spellbook($bookId: Float!) {
+  spellbook(bookId: $bookId) {
+    maxPages
+    name
+    pagesLeft
+    spellPages {
+      spell {
+        ...SpellLiteInfo
+      }
+    }
+  }
+}
+    ${SpellLiteInfoFragmentDoc}`;
+
+/**
+ * __useSpellbookQuery__
+ *
+ * To run a query within a React component, call `useSpellbookQuery` and pass it any options that fit your needs.
+ * When your component renders, `useSpellbookQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useSpellbookQuery({
+ *   variables: {
+ *      bookId: // value for 'bookId'
+ *   },
+ * });
+ */
+export function useSpellbookQuery(baseOptions: Apollo.QueryHookOptions<SpellbookQuery, SpellbookQueryVariables> & ({ variables: SpellbookQueryVariables; skip?: boolean; } | { skip: boolean; }) ) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<SpellbookQuery, SpellbookQueryVariables>(SpellbookDocument, options);
+      }
+export function useSpellbookLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<SpellbookQuery, SpellbookQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<SpellbookQuery, SpellbookQueryVariables>(SpellbookDocument, options);
+        }
+export function useSpellbookSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<SpellbookQuery, SpellbookQueryVariables>) {
+          const options = baseOptions === Apollo.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
+          return Apollo.useSuspenseQuery<SpellbookQuery, SpellbookQueryVariables>(SpellbookDocument, options);
+        }
+export type SpellbookQueryHookResult = ReturnType<typeof useSpellbookQuery>;
+export type SpellbookLazyQueryHookResult = ReturnType<typeof useSpellbookLazyQuery>;
+export type SpellbookSuspenseQueryHookResult = ReturnType<typeof useSpellbookSuspenseQuery>;
+export type SpellbookQueryResult = Apollo.QueryResult<SpellbookQuery, SpellbookQueryVariables>;
 export const WizardSpellsDocument = gql`
     query WizardSpells($limit: Float!, $nameCursor: String, $lvlCursor: Float) {
   wizardSpells(limit: $limit, nameCursor: $nameCursor, lvlCursor: $lvlCursor) {

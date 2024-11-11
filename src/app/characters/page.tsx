@@ -6,6 +6,7 @@ import { CharacterContext, CharacterContextType } from "@/context/CharacterConte
 import { Character, SpellBook, useMyCharactersQuery, } from "@/gql/graphql";
 import Magnifier from "@/svgs/Magnifier";
 import Fuse from "fuse.js";
+import Link from "next/link";
 import { useContext, useState, useTransition } from "react";
 
 export default function Characters() {
@@ -17,10 +18,13 @@ export default function Characters() {
   const {charId, setCharId} = useContext(CharacterContext) as CharacterContextType
   const [, startTransition] = useTransition()
 
-  if(loading) return null
+  console.log(charData)
+  console.log(loading)
 
-  const fuse = new Fuse((charData!.myCharacters as Character[]), {keys: ['name']})
-  const books = charId ? (charData!.myCharacters as Character[]).find(char => char.id === charId)!.spellBooks as SpellBook[] : []
+  if(loading || !charData?.myCharacters) return null
+
+  const fuse = new Fuse((charData.myCharacters), {keys: ['name']})
+  const books = charId ? (charData.myCharacters).find(char => char.id === charId)!.spellBooks as SpellBook[] : []
   
   const bookFuse = new Fuse(books, {keys: ['name']})
   
@@ -93,7 +97,9 @@ export default function Characters() {
         <div className="items-center rounded-xl p-2 hover:shadow-sm hover:shadow-gray-400
         hover:text-indigo-600 grid grid-cols-2 w-48 gap-2 border border-gray-200">
             <div className="col-span-2 flex flex-col place-items-center justify-items-center">
+                <Link href={`/spells/book/${bookFocus}`}>
                 <span className="ms-3 text-xl">View/Edit book spells</span>
+                </Link>
             </div>
         </div>
         <div className="items-center rounded-xl p-2 hover:shadow-sm hover:shadow-gray-400

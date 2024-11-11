@@ -65,7 +65,7 @@ export default function Navbar({setSearchModalState, setSpecModalState, children
         
         </div>
     </div>
-    <div className={`${showFilters ? 'grid' : '-translate-y-24 opacity-0 absolute'} grid-cols-2 transition-all border-b border-slate-900/10 w-full z-40`} >
+    <div className={`${showFilters ? 'grid' : '-translate-y-32 opacity-0 absolute'} grid-cols-2 transition-all border-b border-slate-900/10 w-full z-30`} >
     <div className={`flex flex-row justify-center gap-2 p-2`} >
             <FilterButton name="AoE" options={AoEs} show={showAoe} toggle={toggleAoe} update={filters.uAoes} />
             <FilterButton name={'Casting Time'} options={CastingTimes} show={showCT} toggle={toggleCT} update={filters.uCastingTimes} />
