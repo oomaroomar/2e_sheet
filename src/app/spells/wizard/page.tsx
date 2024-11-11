@@ -1,47 +1,24 @@
 "use client"
 
-import Navbar from "@/components/NavBar/NavBar";
-import SearchModal from "@/components/ModalComponents/SearchModal";
-import SpecModal from "@/components/ModalComponents/SpecModal";
-import SpellDescriptions from "@/components/SpellDescriptionList";
-import SpellGrid, { LoadingGrid } from "@/components/SpellGrid"
-import { useWizardSpellsQuery } from "@/gql/graphql";
-import { schools } from "@/lib/types";
-import { useCallback, useEffect, useState } from "react";
+import SpellPage from "@/components/Index/SpellPage";
+import { Character, useMyCharactersQuery, useWizardSpellsQuery } from "@/gql/graphql";
+import WizardNavbarContent from "@/components/NavBar/WizardNavbarContent";
+import CharacterSearchModal from "@/components/ModalComponents/CharacterModal";
+import { useContext, useState } from "react";
+import { CharacterContext, CharacterContextType } from "@/context/CharacterContext";
 
 export default function Home() {
-  const [showSearchModal, setSearchModalState] = useState<boolean>(false)
-  const [showSpecModal, setSpecModalState] = useState<boolean>(false)
   
+  const [showModal, flipModal] = useState(false)
+  const [limitSpells, setLimitSpells] = useState(false)
   const {data, loading} = useWizardSpellsQuery({variables: {limit: 254740991, lvlCursor: null, nameCursor: null}})
-  
-  const handleKeyPress = useCallback((event: KeyboardEvent) => {
-    if(event.ctrlKey === true) {
-      if(event.key === 'k') {
-        event.preventDefault()
-        setSearchModalState(!showSearchModal)
-      }
-    }
-  },[showSearchModal])
+  const {data: charData, loading: charLoading} = useMyCharactersQuery()
+  const {charId} = useContext(CharacterContext) as CharacterContextType
 
-  useEffect(() => {
-      document.addEventListener('keydown', handleKeyPress)
-      return () => {
-      document.removeEventListener('keydown', handleKeyPress)
-      }
-  },[handleKeyPress])
-
-  return <div className="flex flex-col h-screen" >
-  <Navbar casterClass="Wizard" setSpecModalState={() => setSpecModalState(!showSearchModal)}  setSearchModalState={() => setSearchModalState(!showSearchModal)}/>
-  <div aria-label="main content" className="flex overflow-hidden h-screen" >
-    <div className="flex-1 overflow-auto" >
-      <SpellDescriptions />
-    </div>
-    <div className={`flex-1 overflow-auto  ${[showSearchModal, showSpecModal].every(b => b===false) ? '' : 'blur-sm'}`}>
-      {loading ? <LoadingGrid/> :<SpellGrid loading={loading} spells={data!.wizardSpells.spells} /> }
-    </div>
-  </div>
-  {loading ? '' :<SearchModal spells={data!.wizardSpells.spells} setModalState={(ns: boolean) => setSearchModalState(ns)} showModal={showSearchModal} key={'search'} /> }
-  <SpecModal schools={schools} setModalState={setSpecModalState} showModal={showSpecModal}  />
-  </div>
+  return <SpellPage loading={loading} spells={limitSpells ? charData?.myCharacters
+    ?.find(char => char.id === charId)?.learnedSpells.map(ls => ls.spell)
+  : data?.wizardSpells.spells}> 
+    <WizardNavbarContent limit={limitSpells} toggleLimit={() => setLimitSpells(!limitSpells)} currentChar={charData?.myCharacters?.find(char => char.id === charId)?.name} viewCharacters={() => flipModal(true)} />
+    {charLoading ? null : <CharacterSearchModal closeModal={() => flipModal(false)} showModal={showModal} characters={charData?.myCharacters as Character[]}/>}
+  </SpellPage>
 }

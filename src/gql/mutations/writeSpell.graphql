@@ -1,0 +1,8 @@
+mutation WriteSpell($input: WriteSpellInput!) {
+  writeSpell(input: $input) {
+    error
+    spellPage {
+      spellId
+    }
+  }
+}

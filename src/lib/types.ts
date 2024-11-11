@@ -21,6 +21,10 @@ export interface Spell {
     spheres?: string[] | null
 };
 
+export interface svgProps {
+    h: string
+}
+
 export type SpellLite = Omit<Spell, "description">
 
 export const components = ['material', 'somatic', 'verbal'] as const

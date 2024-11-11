@@ -2,21 +2,19 @@ import Magnifier from "@/svgs/Magnifier"
 import { FormEvent, useCallback, useContext, useEffect, useRef, useState, useTransition } from "react"
 import Fuse from 'fuse.js'
 import SearchResult from "./SearchResult"
-import { Spell } from "@/lib/types"
-import { FilterContext, FilterContextType } from "@/context/FilterContext"
+import { SpellLite } from "@/lib/types"
 import { DescriptionListContext, DescriptionListContextType } from "@/context/DescriptionListContext"
 
 interface SearchModalProps {
     showModal: boolean
     setModalState: (ns: boolean) => void
-    spells: Spell[]
+    spells: SpellLite[]
 }
 
 export default function SearchModal({showModal, setModalState, spells}:SearchModalProps) {
 
     const modalRef = useRef<HTMLInputElement>(null)
     const [searchPattern, setSearchPattern] = useState<string>('')
-    const filters = useContext(FilterContext) as FilterContextType
     const [, startTransition] = useTransition()
     const {addSpell} = useContext(DescriptionListContext) as DescriptionListContextType
 
@@ -45,8 +43,6 @@ export default function SearchModal({showModal, setModalState, spells}:SearchMod
     }, [showModal, setModalState, handleKeyPress, modalRef])
 
     if(!showModal) return null
-
-    filters.runFilters(spells[0] as Spell)
 
     const fuse = new Fuse(spells, {keys: ['name']})
 

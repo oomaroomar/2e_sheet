@@ -1,0 +1,9 @@
+query Character($cId: Float!) {
+  character(cId: $cId) {
+    learnedSpells {
+      spell {
+        ...SpellLiteInfo
+      }
+    }
+  }
+}

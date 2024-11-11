@@ -1,0 +1,13 @@
+mutation LearnSpell($characterId: Float!, $spellId: Float!) {
+  learnSpell(characterId: $characterId, spellId: $spellId) {
+    character {
+      id
+      learnedSpells {
+        spell {
+          ...SpellLiteInfo
+        }
+      }
+    }
+    error
+  }
+}

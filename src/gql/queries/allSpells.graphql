@@ -1,25 +1,8 @@
 query AllSpells($limit: Float!, $nameCursor: String, $lvlCursor: Float) {
   allSpells(limit: $limit, nameCursor: $nameCursor, lvlCursor: $lvlCursor) {
-    spells {
-      id
-      level
-      name
-      school
-      class
-      verbal
-      somatic
-      material
-      materials
-      range
-      aoe
-      castingTime
-      duration
-      savingThrow
-      damage
-      description
-      source
-      spheres
-    }
     hasMore
+    spells {
+      ...SpellLiteInfo
+    }
   }
 }

@@ -1,0 +1,12 @@
+query Spellbook($bookId: Float!) {
+  spellbook(bookId: $bookId) {
+    maxPages
+    name
+    pagesLeft
+    spellPages {
+      spell {
+        ...SpellLiteInfo
+      }
+    }
+  }
+}
