@@ -1,10 +1,8 @@
-import { AoEs, CastingClass, CastingTimes, components, dmgToTextConverter, Ranges, SavingThrows, Sources } from "@/lib/types"
+import { AoEs, CastingTimes, components, dmgToTextConverter, Ranges, SavingThrows, Sources } from "@/lib/types"
 import { useContext, useEffect, useRef, useState } from "react"
 import { FilterContext, FilterContextType } from "@/context/FilterContext"
 import FilterButton, { ExistingFilters } from "./FilterButton"
 import FilterButtonWithSpecialNeeds from "./FilterButtonWithSpecialNeeds"
-import WizardNavbarContent from "./WizardNavbarContent"
-import PriestNavbarContent from './PriestNavbarContent'
 import Burger from "@/svgs/Burger"
 import LeftMenu from "./LeftMenu"
 import FilterIcon from "@/svgs/FilterIcon"
@@ -12,11 +10,12 @@ import FilterIcon from "@/svgs/FilterIcon"
 interface NavBarProps {
     setSearchModalState: () => void
     setSpecModalState: () => void
-    casterClass: CastingClass | 'All'
+    children: React.ReactNode
 }
 
-export default function Navbar({setSearchModalState, setSpecModalState, casterClass}: NavBarProps) {
+export default function Navbar({setSearchModalState, setSpecModalState, children}: NavBarProps) {
     const filters = useContext(FilterContext) as FilterContextType
+
     const [showFilters, setShowFilters] = useState<boolean>(false)
     const [showAoe, toggleAoe] = useState<boolean>(false)
     const [showCT, toggleCT] = useState<boolean>(false)
@@ -55,8 +54,7 @@ export default function Navbar({setSearchModalState, setSpecModalState, casterCl
         <button onClick={setSpecModalState} className="hidden lg:flex items-center text-sm leading-6 text-slate-400 rounded-md ring-1 ring-slate-900/10 shadow-sm py-1.5 pl-2 pr-3 hover:ring-slate-300">
             Specializations 
         </button>
-        {casterClass === 'Wizard' ? <WizardNavbarContent /> : ''}
-        {casterClass === 'Cleric' ? <PriestNavbarContent/> : ''}
+        {children}
         <button onClick={() => setShowFilters(!showFilters)} className="hidden lg:flex items-center text-sm leading-6 text-slate-400 rounded-md ring-1 ring-slate-900/10 shadow-sm p-1 hover:ring-slate-300">
             <FilterIcon h="34px"/>
         </button>
@@ -67,7 +65,7 @@ export default function Navbar({setSearchModalState, setSpecModalState, casterCl
         
         </div>
     </div>
-    <div className={`${showFilters ? 'grid' : 'hidden'} grid-cols-2 border-b border-slate-900/10 z-40 w-full`} >
+    <div className={`${showFilters ? 'grid' : '-translate-y-24 opacity-0 absolute'} grid-cols-2 transition-all border-b border-slate-900/10 w-full z-40`} >
     <div className={`flex flex-row justify-center gap-2 p-2`} >
             <FilterButton name="AoE" options={AoEs} show={showAoe} toggle={toggleAoe} update={filters.uAoes} />
             <FilterButton name={'Casting Time'} options={CastingTimes} show={showCT} toggle={toggleCT} update={filters.uCastingTimes} />

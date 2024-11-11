@@ -1,37 +1,37 @@
 import Magnifier from "@/svgs/Magnifier"
 import { FormEvent, useCallback, useContext, useEffect, useRef, useState, useTransition } from "react"
 import Fuse from 'fuse.js'
-import SearchResult from "./SearchResult"
-import { SpellLite } from "@/lib/types"
-import { DescriptionListContext, DescriptionListContextType } from "@/context/DescriptionListContext"
+import { Character } from "@/gql/graphql"
+import { CharacterContext, CharacterContextType } from "@/context/CharacterContext"
+import CharCard from "./CharacterCard"
 
 interface SearchModalProps {
     showModal: boolean
-    setModalState: (ns: boolean) => void
-    spells: SpellLite[]
+    closeModal: () => void
+    characters: Character[]
 }
 
-export default function SearchModal({showModal, setModalState, spells}:SearchModalProps) {
+export default function CharacterSearchModal({showModal, closeModal, characters}:SearchModalProps) {
 
     const modalRef = useRef<HTMLInputElement>(null)
     const [searchPattern, setSearchPattern] = useState<string>('')
     const [, startTransition] = useTransition()
-    const {addSpell} = useContext(DescriptionListContext) as DescriptionListContextType
+    const {setCharId} = useContext(CharacterContext) as CharacterContextType
 
     const handleKeyPress = useCallback((event: KeyboardEvent) => {
         if(event.key === 'Escape') {
             if(searchPattern === '') {
-                setModalState(false)
+                closeModal()
             } else {
                 setSearchPattern('')
             }
         }
-      },[setModalState, setSearchPattern, searchPattern])
+      },[closeModal, setSearchPattern, searchPattern])
 
     useEffect(() => {
         const checkClickOutside = (e: MouseEvent) => {
             if(showModal && !modalRef?.current?.contains(e.target as Node)) {
-                setModalState(false)
+                closeModal()
             }
         }
         document.addEventListener('mousedown', checkClickOutside)
@@ -40,15 +40,17 @@ export default function SearchModal({showModal, setModalState, spells}:SearchMod
             document.removeEventListener('mousedown', checkClickOutside)
             document.removeEventListener('keydown', handleKeyPress)
         }
-    }, [showModal, setModalState, handleKeyPress, modalRef])
+    }, [showModal, closeModal, handleKeyPress, modalRef])
 
     if(!showModal) return null
 
-    const fuse = new Fuse(spells, {keys: ['name']})
+
+    const fuse = new Fuse(characters, {keys: ['name']})
 
     const handleEnter = (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault()
-        addSpell(fuse.search(searchPattern)[0].item.id)
+        setCharId(fuse.search(searchPattern)[0].item.id)
+        closeModal()
     }
 
     return <div className="h-screen w-full fixed top-0 mx-auto left-0 z-40 hidden lg:flex flex-col p-12vh">
@@ -64,7 +66,8 @@ export default function SearchModal({showModal, setModalState, spells}:SearchMod
             </header>
             <div className="overflow-auto flex flex-auto px-2" >
                 <div className="longlist w-full pb-6">
-                {fuse.search(searchPattern).map(spell => <SearchResult key={spell.item.id} inspectSpell={addSpell} spell={spell.item} />)}
+                {searchPattern !== '' ? fuse.search(searchPattern).map(({item}) => <CharCard character={item} key={item.id} onClick={() => setCharId(item.id)}/>)
+                : characters.map(char => <CharCard character={char} key={char.id} onClick={() => setCharId(char.id)}/>)}
                 </div>
             </div>
         </div>

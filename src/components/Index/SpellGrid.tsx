@@ -1,4 +1,4 @@
-import SuccinctSpell from '@/components/SuccinctSpell'
+import SuccinctSpell from '@/components/Index/SuccinctSpell'
 import { SpellLite } from '@/lib/types'
 import { useContext} from "react"
 import { FilterContext, FilterContextType } from "@/context/FilterContext"

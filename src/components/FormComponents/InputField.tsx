@@ -15,7 +15,7 @@ export default function InputFields({name, type, bonus, text}: InputFieldProps) 
     return <div>
     <div className="flex items-center justify-between" >
       <label>{text}</label>
-      <div className="font-semibold text-sm text-indigo-600 hover:text-indigo-500 hover:cursor-pointer">
+      <div className="font-semibold text-sm text-pink-600 hover:text-pink-400 hover:cursor-pointer">
         {bonus}
       </div>
       </div>

@@ -4,6 +4,7 @@ import { FilterProvider } from "@/context/FilterContext";
 import {DescriptionListProvider} from '@/context/DescriptionListContext'
 import { apolloClient } from "@/lib/apolloClient";
 import { ApolloProvider } from "@apollo/client";
+import { CharacterProvider } from "@/context/CharacterContext";
 
 
 export default function SpellsLayout({
@@ -16,9 +17,11 @@ export default function SpellsLayout({
   <ApolloProvider client={apolloClient}>
   <FilterProvider>
   <DescriptionListProvider>
+  <CharacterProvider>
     <div className="h-screen overflow-hidden">
       {children}
     </div>
+  </CharacterProvider>
   </DescriptionListProvider>
   </FilterProvider>
   </ApolloProvider>
