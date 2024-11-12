@@ -172,7 +172,7 @@ export type Sphere =
   | 'Fire'
   | 'Water'
 
-  export const Spheres = [
+  export const spheres = [
   "All"
   , "Animal"
   , "Astral"
