@@ -23,6 +23,7 @@ export interface Spell {
 
 export interface svgProps {
     h: string
+    // color: string
 }
 
 export type SpellLite = Omit<Spell, "description">

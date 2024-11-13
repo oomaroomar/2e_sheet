@@ -44,7 +44,7 @@ export default function SearchModal({showModal, setModalState, spells}:SearchMod
 
     if(!showModal) return null
 
-    const fuse = new Fuse(spells, {keys: ['name']})
+    const fuse = new Fuse(spells, {keys: ['name'], minMatchCharLength: 2})
 
     const handleEnter = (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault()

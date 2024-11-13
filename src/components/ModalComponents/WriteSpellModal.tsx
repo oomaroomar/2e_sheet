@@ -4,7 +4,7 @@ import { Spell } from "@/lib/types"
 import { useMyCharactersQuery, useWriteSpellMutation } from "@/gql/graphql"
 import { Field, Form, Formik } from "formik"
 import { CharacterContext, CharacterContextType } from "@/context/CharacterContext"
-import InputField from "../FormComponents/InputField"
+import { SimpleInputField } from "../FormComponents/InputField"
 
 interface SearchModalProps {
     showModal: boolean
@@ -46,8 +46,8 @@ export default function WriteSpellModal({showModal, setModalState, spell}:Search
     return <div className="h-screen w-full fixed top-0 mx-auto left-0 z-40 hidden lg:flex flex-col p-12vh">
         <div ref={modalRef} className="mx-auto max-h-full rounded-lg bg-white my-0 w-full max-w-3xl flex flex-col shadow-2xl shadow-black" >
         <div className="" >
-        <div className={`grid grid-cols-2 gap-y-2 bg-white text-black rounded-xl shadow-md shadow-${spell.school}`} >
-            <div className={`col-span-2 grid grid-cols-11 bg-${spell.school} rounded-t-xl text-xl`}>
+        <div className={`grid grid-cols-2 gap-y-2 bg-white text-black rounded-xl shadow-md shadow-${spell.schools[0]}`} >
+            <div className={`col-span-2 grid grid-cols-11 bg-${spell.schools[0]} rounded-t-xl text-xl`}>
                 <div className="px-4 py-1" ><b>{`${spell.level})`}</b></div>
                 <div className="col-span-7 px-4 py-1" ><b>{spell.name}</b></div>
                 <div className="px-4 py-1" ><b>{spell.class === 'Cleric' ? 'C' : 'W'}</b></div>
@@ -78,7 +78,7 @@ export default function WriteSpellModal({showModal, setModalState, spell}:Search
                     {theSpellbooks.map(op => <option key={op.id} value={op.id}>{op.name}</option>)}
                 </Field>
 
-                <InputField type="number" name="pages" text="Pages" bonus="" /> 
+                <SimpleInputField type="number" name="pages" text="Pages" bonus="" /> 
                 <div className="">
                     <button className="text-center text-white w-full rounded-md p-1.5 bg-pink-600 shadow-sm hover:bg-pink-500 
                     focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-pink-600" type="submit" disabled={isSubmitting}>
@@ -102,7 +102,7 @@ export default function WriteSpellModal({showModal, setModalState, spell}:Search
              }
             {/* Add scroll bar by adding max-h-80 and overflow-auto */}
             <div className="col-span-2 p-2 px-4 pt-0 text-lg " > <b className="text-lg">Description: </b>{spell.description}</div>
-            <div className="px-4 pt-0 pb-2" > <b>School:</b>  {spell.school}</div>
+            <div className="px-4 pt-0 pb-2" > <b>School:</b>  {spell.schools[0]}</div>
             <div className="px-4 pt-0 pb-2" > <b>Source:</b>  {spell.source}</div>
         </div>
     </div>

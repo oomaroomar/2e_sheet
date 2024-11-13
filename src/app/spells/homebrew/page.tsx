@@ -1,26 +1,28 @@
 "use client";
 
-import { materialBox, somaticBox, verbalBox } from "@/components/FormComponents/CheckBox";
+import {
+  materialBox,
+  somaticBox,
+  verbalBox,
+} from "@/components/FormComponents/CheckBox";
 import InputField from "@/components/FormComponents/InputField";
-import SelectField from "@/components/FormComponents/SelectField";
-import { useCreateSpellMutation } from "@/gql/graphql";
+import SelectField from "@/components/FormComponents/SelectField2";
+import DumbSpell from "@/components/Index/DumbSpell";
+import NavBar from "@/components/NavBar/NavBar2";
+import { useCreateSpellMutation, useMeQuery } from "@/gql/graphql";
 import { schools as allSchools, spheres as allSpheres } from "@/lib/types";
+import { isServer } from "@/lib/utils";
 import { Formik, Form, Field } from "formik";
-import { useState } from "react";
-import { MultiValue } from "react-select";
 
 export default function Homebrew() {
-  const [createSpell] = useCreateSpellMutation()
-  // Need to extract some logic out of Formik, because form was becomming laggy
-  const [level, setLevel] = useState<{ value: string; label: string; }>()
-  const [schools, setSchools] = useState<MultiValue<{ value: string; label: string; }>>()
-  const [castingClass, setClass] = useState<{ value: string; label: string; }>()
-  const [castingTime, setCastingTime] = useState<{ value: string; label: string; }>()
-  const [savingThrow, setSavingThrow] = useState<{ value: string; label: string; }>()
-  const [spheres, setSpheres] = useState<MultiValue<{ value: string; label: string; }>>()
+  const [createSpell] = useCreateSpellMutation();
+  const {data, loading} = useMeQuery({skip: isServer()})
 
   return (
-    <div className="h-screen w-screen flex place-items-center items-center justify-center">
+    <div className="h-scren w-screen">
+      <NavBar />
+
+    <div className="h-screen w-screen flex flex-wrap place-items-center items-center justify-center">
       <Formik
         initialValues={{
           name: "",
@@ -33,142 +35,197 @@ export default function Homebrew() {
           customCastingTime: "",
           verbal: false,
           somatic: false,
-          material: false
+          material: false,
+          level: { value: "1", label: "1" },
+          castingClass: { value: "", label: "" },
+          castingTime: { value: "", label: "" },
+          savingThrow: { value: "", label: "" },
+          spheres: [],
+          schools: [],
         }}
-        onSubmit={async (spellInput, { setStatus, resetForm }) => {
-          console.log(spellInput)
-          console.log('level', level)
-          console.log('schools', schools)
-          console.log('castingClass', castingClass)
-          console.log('castingTime', castingTime)
-          console.log('savingThrow', savingThrow)
-          console.log('spheres', spheres)
-          if(!level || !schools || !castingTime || !castingClass || !savingThrow || (castingClass.value === 'Cleric' && !spheres)) return
-          const {customCastingTime, ...rest} = spellInput
-          const spellInfo = {...rest, 
-            level: parseInt(level.value), 
-            class: castingClass.value, 
-            spheres: !!spheres ? spheres.map(sphere => (sphere as {value: string, label: string}).value) : [],
-            castingTime: castingTime.value === "Custom" ? customCastingTime : castingTime.value,
-            savingThrow: savingThrow.value, 
-            schools: (schools.map(sc => (sc as {value: string, label: string}).value))
-          }
-          console.log(spellInfo)
+        onSubmit={async (spellInput, { resetForm }) => {
+          console.log(spellInput);
+          const { customCastingTime, ...rest } = spellInput;
+          const spellInfo = {
+            ...rest,
+            level: parseInt(spellInput.level.value),
+            class: spellInput.castingClass.value,
+            spheres:
+              spellInput.spheres.length !== 0
+                ? spellInput.spheres.map(
+                    (sphere) =>
+                      (sphere as { value: string; label: string }).value
+                  )
+                : [],
+            castingTime:
+              spellInput.castingTime.value === "Custom"
+                ? customCastingTime
+                : spellInput.castingTime.value,
+            savingThrow: spellInput.savingThrow.value,
+            schools: spellInput.schools.map(
+              (sc) => (sc as { value: string; label: string }).value
+            ),
+          };
+          console.log(spellInfo);
 
           const response = await createSpell({
             variables: {
-              spellInfo
-            }
-          })
-          // reset everything
-          setLevel(undefined)
-          setSchools(undefined)
-          setClass(undefined)
-          setCastingTime(undefined)
-          setSavingThrow(undefined)
-          setSpheres(undefined)
-          resetForm()
+              spellInfo,
+            },
+          });
+          resetForm();
 
-          console.log(response)
+          console.log(response);
         }}
       >
         {({ isSubmitting, setFieldValue, values }) => (
-          <Form className="w-full h-full">
-            <div className="flex gap-10 p-10">
-              <div className="main shit gap-6 flex flex-col min-w-96">
-                <InputField updateParent={(s) => setFieldValue('name', s)} text="Name" bonus="" name="name" type="text" />
-                <SelectField
-                  updateParent={setLevel}
-                  field="level"
-                  options={[...Array(9).keys()].map((l) => ({
-                    value: (l + 1).toString(),
-                    label: (l + 1).toString(),
-                  }))}
-                />
-                <SelectField
-                  field="class"
-                  updateParent={(val) => {
-                    setClass(val)
-                  }}
-                  options={[
-                    { value: "Wizard", label: "Wizard" },
-                    { value: "Cleric", label: "Cleric" },
-                  ]}
-                />
-                {castingClass?.value === "Cleric" ? (
-                  <SelectField
-                    updateParentMulti={setSpheres}
-                    field="spheres"
-                    isMulti
-                    options={allSpheres.map((sp) => ({ value: sp, label: sp }))}
+          <Form className="w-full h-full flex flex-wrap overflow-auto">
+            <div className="flex flex-col">
+              <div className="flex gap-10 flex-wrap p-2 lg:p-10">
+                <div className="main shit gap-4 flex flex-col min-w-96">
+                  <InputField
+                    updateParent={(s) => setFieldValue("name", s)}
+                    text="Name"
+                    bonus=""
+                    name="name"
+                    type="text"
                   />
-                ) : (
-                  ""
-                )}
-                <SelectField
-                  field="schools"
-                  updateParentMulti={setSchools}
-                  isMulti
-                  options={allSchools.map((sc) => ({ value: sc, label: sc }))}
-                />
-
-                <Field value="somatic" name="somatic" type="checkbox" component={somaticBox}/>
-                <Field value="verbal" name="verbal" type="checkbox" component={verbalBox}/>
-                <Field value="material" name="material" type="checkbox" component={materialBox}/>
-
-                {values.material ? <InputField
-                  updateParent={(s) => setFieldValue('materials', s)}
-                  name="materials"
-                  type="text"
-                  text="Material components"
-                /> : ''}
-              </div>
-              <div className="flex flex-col gap-6 min-w-96">
-                <InputField 
-                  updateParent={(s) => setFieldValue('aoe', s)}
-                name="aoe" type="text" text="AoE" />
-                <SelectField
-                  updateParent={setCastingTime}
-                  field="castingTime"
-                  options={[{ value: "Custom", label: "Custom" }].concat(
-                    [...Array(10).keys()].map((ct) => ({
-                      value: (ct + 1).toString(),
-                      label: (ct + 1).toString(),
-                    }))
+                  <SelectField
+                    setFieldValue={setFieldValue}
+                    field="level"
+                    options={[...Array(9).keys()].map((l) => ({
+                      value: (l + 1).toString(),
+                      label: (l + 1).toString(),
+                    }))}
+                  />
+                  <SelectField
+                    field="castingClass"
+                    setFieldValue={setFieldValue}
+                    options={[
+                      { value: "Wizard", label: "Wizard" },
+                      { value: "Cleric", label: "Cleric" },
+                    ]}
+                  />
+                  {values.castingClass?.value === "Cleric" ? (
+                    <SelectField
+                      setFieldValue={setFieldValue}
+                      field="spheres"
+                      isMulti
+                      options={allSpheres.map((sp) => ({
+                        value: sp,
+                        label: sp,
+                      }))}
+                    />
+                  ) : (
+                    ""
                   )}
-                />
-                {(castingTime && castingTime.value === "Custom") ? (
-                  <InputField 
-                  updateParent={(s) => setFieldValue('aoe', s)}
-                  name="customCastingTime" type="text" text="Custom" />
-                ) : (
-                  ""
-                )}
+                  <SelectField
+                    field="schools"
+                    setFieldValue={setFieldValue}
+                    isMulti
+                    options={allSchools.map((sc) => ({ value: sc, label: sc }))}
+                  />
 
-                <InputField 
-                  updateParent={(s) => setFieldValue('damage', s)}
-                name="damage" type="text" text="Damage" />
-                <InputField 
-                  updateParent={(s) => setFieldValue('duration', s)}
-                name="duration" type="text" text="Duration" />
-               
-                <InputField 
-                  updateParent={(s) => setFieldValue('range', s)}
-                name="range" type="text" text="Range" />
-                
-                <SelectField 
-                  updateParent={setSavingThrow}
-                  fieldName="Saving Throw"
-                  field="savingThrow"
-                  options={[ {value: "none", label: "none"}, {value: "1/2", label: "1/2"}, {value: "negate", label: "negate"},{label: "special", value: "special"}]}
-                  // setFieldValue={setFieldValue}
-                />
+                  <Field
+                    value="somatic"
+                    name="somatic"
+                    type="checkbox"
+                    component={somaticBox}
+                  />
+                  <Field
+                    value="verbal"
+                    name="verbal"
+                    type="checkbox"
+                    component={verbalBox}
+                  />
+                  <Field
+                    value="material"
+                    name="material"
+                    type="checkbox"
+                    component={materialBox}
+                  />
+
+                  {values.material ? (
+                    <InputField
+                      updateParent={(s) => setFieldValue("materials", s)}
+                      name="materials"
+                      type="text"
+                      text="Material components"
+                    />
+                  ) : (
+                    ""
+                  )}
+                </div>
+                <div className="flex flex-col gap-4 min-w-96">
+                  <InputField
+                    updateParent={(s) => setFieldValue("aoe", s)}
+                    name="aoe"
+                    type="text"
+                    text="AoE"
+                  />
+                  <SelectField
+                    setFieldValue={setFieldValue}
+                    field="castingTime"
+                    options={[{ value: "Custom", label: "Custom" }].concat(
+                      [...Array(10).keys()].map((ct) => ({
+                        value: (ct + 1).toString(),
+                        label: (ct + 1).toString(),
+                      }))
+                    )}
+                  />
+                  {values.castingTime &&
+                  values.castingTime.value === "Custom" ? (
+                    <InputField
+                      updateParent={(s) => setFieldValue("aoe", s)}
+                      name="customCastingTime"
+                      type="text"
+                      text="Custom"
+                    />
+                  ) : (
+                    ""
+                  )}
+
+                  <InputField
+                    updateParent={(s) => setFieldValue("damage", s)}
+                    name="damage"
+                    type="text"
+                    text="Damage"
+                  />
+                  <InputField
+                    updateParent={(s) => setFieldValue("duration", s)}
+                    name="duration"
+                    type="text"
+                    text="Duration"
+                  />
+
+                  <InputField
+                    updateParent={(s) => setFieldValue("range", s)}
+                    name="range"
+                    type="text"
+                    text="Range"
+                  />
+
+                  <SelectField
+                    setFieldValue={setFieldValue}
+                    fieldName="Saving Throw"
+                    field="savingThrow"
+                    options={[
+                      { value: "none", label: "none" },
+                      { value: "1/2", label: "1/2" },
+                      { value: "negate", label: "negate" },
+                      { label: "special", value: "special" },
+                    ]}
+                  />
+                </div>
               </div>
-
-              <div className="flex flex-col gap-6 w-1/2 min-w-96">
-                <InputField 
-                  updateParent={(s) => setFieldValue('description', s)}
-                textarea name="description" type="text" text="Description" />
+              <div className="p-10 pt-0 flex flex-col gap-4 w-1/2 ">
+                <InputField
+                  updateParent={(s) => setFieldValue("description", s)}
+                  textarea
+                  name="description"
+                  type="text"
+                  text="Description"
+                />
                 <button
                   className="text-center text-white w-48 rounded-md p-1.5 bg-pink-600 shadow-sm hover:bg-pink-500 
       focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-pink-600"
@@ -179,9 +236,32 @@ export default function Homebrew() {
                 </button>
               </div>
             </div>
+            <div className="p-10">
+                <DumbSpell spell={{
+                  aoe: values.aoe,
+                  castingTime: values.castingTime.value === "Custom" ? values.customCastingTime : values.castingTime.value,
+                  class: values.castingClass.value,
+                  damage: values.damage,
+                  description: values.description,
+                  duration: values.duration,
+                  level: parseInt(values.level.value),
+                  material: values.material,
+                  materials: values.materials,
+                  name: values.name,
+                  range: values.range,
+                  savingThrow: values.savingThrow.value,
+                  schools: values.schools.length === 0 ? [''] : values.schools.map(sc => (sc as {value: string, label: string}).value),
+                  somatic: values.somatic,
+                  source: loading ? '' : (data!.me!.username as string),
+                  verbal: values.verbal,
+                  spheres: values.spheres.length === 0 ? [''] : values.spheres.map(sc => (sc as {value: string, label: string}).value),
+                }} />
+
+            </div>
           </Form>
         )}
       </Formik>
+    </div>
     </div>
   );
 }

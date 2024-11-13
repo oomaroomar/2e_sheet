@@ -1,5 +1,5 @@
 import { Formik, Form } from "formik"
-import InputField from "./InputField"
+import { SimpleInputField } from "./InputField"
 import { useCreateSpellBookMutation } from "@/gql/graphql";
 
 interface CreateBookFormProps {
@@ -10,7 +10,7 @@ export default function CreateBookForm({charId}: CreateBookFormProps) {
 
     const [createSpellBook] = useCreateSpellBookMutation();
     return <Formik initialValues={{name: '', maxPages: 0}} 
-    onSubmit={async ({name, maxPages}, {setStatus}) => {
+    onSubmit={async ({name, maxPages}, {setStatus, resetForm}) => {
         if(!charId) {
             setStatus("o oh")
             return
@@ -24,15 +24,17 @@ export default function CreateBookForm({charId}: CreateBookFormProps) {
     if(response.data?.createSpellBook.errors) {
         console.log('ARASRA')
         setStatus(response.data.createSpellBook.errors)
-    } 
+    }  else {
+        resetForm()
+    }
     }}>
     {({isSubmitting}) => <Form>
     <div className="flex flex-col space-y-6 w-96">
-    <InputField text="Book name" bonus="" name="name" type="text"/>
-    <InputField text="Max pages" bonus="" name="maxPages" type="number"/>
+    <SimpleInputField text="Book name" bonus="" name="name" type="text"/>
+    <SimpleInputField text="Max pages" bonus="" name="maxPages" type="number"/>
     <div className="">
-        <button className="text-center text-white w-full rounded-md p-1.5 bg-indigo-600 shadow-sm hover:bg-indigo-500 
-        focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600" type="submit" disabled={isSubmitting}>
+        <button className="text-center text-white w-full rounded-md p-1.5 bg-pink-600 shadow-sm hover:bg-pink-500 
+        focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-pink-600" type="submit" disabled={isSubmitting}>
         Create book
         </button>
         </div>

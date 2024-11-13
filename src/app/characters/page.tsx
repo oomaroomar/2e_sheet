@@ -3,7 +3,7 @@ import {CharacterItem, BookItem } from "@/components/CharacterPageItems";
 import CreateBookForm from "@/components/FormComponents/CreateBookForm";
 import CreateCharacterForm from "@/components/FormComponents/CreateCharacterForm";
 import { CharacterContext, CharacterContextType } from "@/context/CharacterContext";
-import { Character, SpellBook, useMyCharactersQuery, } from "@/gql/graphql";
+import { SpellBook, useMyCharactersQuery, } from "@/gql/graphql";
 import Magnifier from "@/svgs/Magnifier";
 import Fuse from "fuse.js";
 import Link from "next/link";
@@ -24,6 +24,7 @@ export default function Characters() {
   if(loading || !charData?.myCharacters) return null
 
   const fuse = new Fuse((charData.myCharacters), {keys: ['name']})
+  console.log(charId)
   const books = charId ? (charData.myCharacters).find(char => char.id === charId)!.spellBooks as SpellBook[] : []
   
   const bookFuse = new Fuse(books, {keys: ['name']})
