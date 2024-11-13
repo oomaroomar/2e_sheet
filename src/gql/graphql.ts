@@ -246,7 +246,7 @@ export type Spell = {
   name: Scalars['String']['output'];
   range: Scalars['String']['output'];
   savingThrow: Scalars['String']['output'];
-  school: Scalars['String']['output'];
+  schools: Array<Scalars['String']['output']>;
   somatic: Scalars['Boolean']['output'];
   source: Scalars['String']['output'];
   spheres?: Maybe<Array<Scalars['String']['output']>>;
@@ -284,7 +284,7 @@ export type SpellEditInput = {
   name: Scalars['String']['input'];
   range: Scalars['String']['input'];
   savingThrow: Scalars['String']['input'];
-  school: Scalars['String']['input'];
+  schools: Array<Scalars['String']['input']>;
   somatic: Scalars['Boolean']['input'];
   spheres?: InputMaybe<Array<Scalars['String']['input']>>;
   verbal: Scalars['Boolean']['input'];
@@ -309,7 +309,7 @@ export type SpellInput = {
   name: Scalars['String']['input'];
   range: Scalars['String']['input'];
   savingThrow: Scalars['String']['input'];
-  school: Scalars['String']['input'];
+  schools: Array<Scalars['String']['input']>;
   somatic: Scalars['Boolean']['input'];
   spheres?: InputMaybe<Array<Scalars['String']['input']>>;
   verbal: Scalars['Boolean']['input'];
@@ -358,9 +358,9 @@ export type WriteSpellInput = {
   spellId: Scalars['Float']['input'];
 };
 
-export type SpellInfoFragment = { __typename?: 'Spell', id: number, level: number, name: string, school: string, class: string, verbal: boolean, somatic: boolean, material: boolean, materials: string, range: string, aoe: string, castingTime: string, duration: string, savingThrow: string, damage: string, description: string, source: string, spheres?: Array<string> | null };
+export type SpellInfoFragment = { __typename?: 'Spell', id: number, level: number, name: string, schools: Array<string>, class: string, verbal: boolean, somatic: boolean, material: boolean, materials: string, range: string, aoe: string, castingTime: string, duration: string, savingThrow: string, damage: string, description: string, source: string, spheres?: Array<string> | null };
 
-export type SpellLiteInfoFragment = { __typename?: 'Spell', id: number, level: number, name: string, school: string, class: string, verbal: boolean, somatic: boolean, material: boolean, materials: string, range: string, aoe: string, castingTime: string, duration: string, savingThrow: string, damage: string, source: string, spheres?: Array<string> | null };
+export type SpellLiteInfoFragment = { __typename?: 'Spell', id: number, level: number, name: string, schools: Array<string>, class: string, verbal: boolean, somatic: boolean, material: boolean, materials: string, range: string, aoe: string, castingTime: string, duration: string, savingThrow: string, damage: string, source: string, spheres?: Array<string> | null };
 
 export type ChangePasswordMutationVariables = Exact<{
   newPassword: Scalars['String']['input'];
@@ -376,6 +376,13 @@ export type CreateCharacterMutationVariables = Exact<{
 
 
 export type CreateCharacterMutation = { __typename?: 'Mutation', createCharacter: { __typename?: 'CharacterResponse', error?: string | null, character?: { __typename?: 'Character', name: string, id: number } | null } };
+
+export type CreateSpellMutationVariables = Exact<{
+  spellInfo: SpellInput;
+}>;
+
+
+export type CreateSpellMutation = { __typename?: 'Mutation', createSpell: { __typename?: 'Spell', id: number, level: number, name: string, schools: Array<string>, class: string, verbal: boolean, somatic: boolean, material: boolean, materials: string, range: string, aoe: string, castingTime: string, duration: string, savingThrow: string, damage: string, description: string, source: string, spheres?: Array<string> | null } };
 
 export type CreateSpellBookMutationVariables = Exact<{
   maxPages: Scalars['Float']['input'];
@@ -399,7 +406,7 @@ export type LearnSpellMutationVariables = Exact<{
 }>;
 
 
-export type LearnSpellMutation = { __typename?: 'Mutation', learnSpell: { __typename?: 'CharacterResponse', error?: string | null, character?: { __typename?: 'Character', id: number, learnedSpells: Array<{ __typename?: 'LearnedSpell', spell: { __typename?: 'Spell', id: number, level: number, name: string, school: string, class: string, verbal: boolean, somatic: boolean, material: boolean, materials: string, range: string, aoe: string, castingTime: string, duration: string, savingThrow: string, damage: string, source: string, spheres?: Array<string> | null } }> } | null } };
+export type LearnSpellMutation = { __typename?: 'Mutation', learnSpell: { __typename?: 'CharacterResponse', error?: string | null, character?: { __typename?: 'Character', id: number, learnedSpells: Array<{ __typename?: 'LearnedSpell', spell: { __typename?: 'Spell', id: number, level: number, name: string, schools: Array<string>, class: string, verbal: boolean, somatic: boolean, material: boolean, materials: string, range: string, aoe: string, castingTime: string, duration: string, savingThrow: string, damage: string, source: string, spheres?: Array<string> | null } }> } | null } };
 
 export type LoginMutationVariables = Exact<{
   password: Scalars['String']['input'];
@@ -435,7 +442,7 @@ export type AllSpellsQueryVariables = Exact<{
 }>;
 
 
-export type AllSpellsQuery = { __typename?: 'Query', allSpells: { __typename?: 'PaginatedSpells', hasMore: boolean, spells: Array<{ __typename?: 'Spell', id: number, level: number, name: string, school: string, class: string, verbal: boolean, somatic: boolean, material: boolean, materials: string, range: string, aoe: string, castingTime: string, duration: string, savingThrow: string, damage: string, source: string, spheres?: Array<string> | null }> } };
+export type AllSpellsQuery = { __typename?: 'Query', allSpells: { __typename?: 'PaginatedSpells', hasMore: boolean, spells: Array<{ __typename?: 'Spell', id: number, level: number, name: string, schools: Array<string>, class: string, verbal: boolean, somatic: boolean, material: boolean, materials: string, range: string, aoe: string, castingTime: string, duration: string, savingThrow: string, damage: string, source: string, spheres?: Array<string> | null }> } };
 
 export type ClericSpellsQueryVariables = Exact<{
   limit: Scalars['Float']['input'];
@@ -444,14 +451,14 @@ export type ClericSpellsQueryVariables = Exact<{
 }>;
 
 
-export type ClericSpellsQuery = { __typename?: 'Query', clericSpells: { __typename?: 'PaginatedSpells', hasMore: boolean, spells: Array<{ __typename?: 'Spell', id: number, level: number, name: string, school: string, class: string, verbal: boolean, somatic: boolean, material: boolean, materials: string, range: string, aoe: string, castingTime: string, duration: string, savingThrow: string, damage: string, source: string, spheres?: Array<string> | null }> } };
+export type ClericSpellsQuery = { __typename?: 'Query', clericSpells: { __typename?: 'PaginatedSpells', hasMore: boolean, spells: Array<{ __typename?: 'Spell', id: number, level: number, name: string, schools: Array<string>, class: string, verbal: boolean, somatic: boolean, material: boolean, materials: string, range: string, aoe: string, castingTime: string, duration: string, savingThrow: string, damage: string, source: string, spheres?: Array<string> | null }> } };
 
 export type CharacterQueryVariables = Exact<{
   cId: Scalars['Float']['input'];
 }>;
 
 
-export type CharacterQuery = { __typename?: 'Query', character?: { __typename?: 'Character', learnedSpells: Array<{ __typename?: 'LearnedSpell', spell: { __typename?: 'Spell', id: number, level: number, name: string, school: string, class: string, verbal: boolean, somatic: boolean, material: boolean, materials: string, range: string, aoe: string, castingTime: string, duration: string, savingThrow: string, damage: string, source: string, spheres?: Array<string> | null } }> } | null };
+export type CharacterQuery = { __typename?: 'Query', character?: { __typename?: 'Character', learnedSpells: Array<{ __typename?: 'LearnedSpell', spell: { __typename?: 'Spell', id: number, level: number, name: string, schools: Array<string>, class: string, verbal: boolean, somatic: boolean, material: boolean, materials: string, range: string, aoe: string, castingTime: string, duration: string, savingThrow: string, damage: string, source: string, spheres?: Array<string> | null } }> } | null };
 
 export type MeQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -461,21 +468,21 @@ export type MeQuery = { __typename?: 'Query', me?: { __typename?: 'User', userna
 export type MyCharactersQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type MyCharactersQuery = { __typename?: 'Query', myCharacters?: Array<{ __typename?: 'Character', id: number, name: string, spellBooks?: Array<{ __typename?: 'SpellBook', id: number, name: string, maxPages?: number | null, pagesLeft: number, spellPages?: Array<{ __typename?: 'SpellPage', pages?: number | null, spell: { __typename?: 'Spell', id: number, level: number, name: string, school: string, class: string, verbal: boolean, somatic: boolean, material: boolean, materials: string, range: string, aoe: string, castingTime: string, duration: string, savingThrow: string, damage: string, source: string, spheres?: Array<string> | null } }> | null, owner: { __typename?: 'Character', name: string } }> | null, learnedSpells: Array<{ __typename?: 'LearnedSpell', spell: { __typename?: 'Spell', id: number, level: number, name: string, school: string, class: string, verbal: boolean, somatic: boolean, material: boolean, materials: string, range: string, aoe: string, castingTime: string, duration: string, savingThrow: string, damage: string, source: string, spheres?: Array<string> | null } }> }> | null };
+export type MyCharactersQuery = { __typename?: 'Query', myCharacters?: Array<{ __typename?: 'Character', id: number, name: string, spellBooks?: Array<{ __typename?: 'SpellBook', id: number, name: string, maxPages?: number | null, pagesLeft: number, spellPages?: Array<{ __typename?: 'SpellPage', pages?: number | null, spell: { __typename?: 'Spell', id: number, level: number, name: string, schools: Array<string>, class: string, verbal: boolean, somatic: boolean, material: boolean, materials: string, range: string, aoe: string, castingTime: string, duration: string, savingThrow: string, damage: string, source: string, spheres?: Array<string> | null } }> | null, owner: { __typename?: 'Character', name: string } }> | null, learnedSpells: Array<{ __typename?: 'LearnedSpell', spell: { __typename?: 'Spell', id: number, level: number, name: string, schools: Array<string>, class: string, verbal: boolean, somatic: boolean, material: boolean, materials: string, range: string, aoe: string, castingTime: string, duration: string, savingThrow: string, damage: string, source: string, spheres?: Array<string> | null } }> }> | null };
 
 export type SpellByIdQueryVariables = Exact<{
   id: Scalars['Int']['input'];
 }>;
 
 
-export type SpellByIdQuery = { __typename?: 'Query', spellByID: { __typename?: 'Spell', id: number, level: number, name: string, school: string, class: string, verbal: boolean, somatic: boolean, material: boolean, materials: string, range: string, aoe: string, castingTime: string, duration: string, savingThrow: string, damage: string, description: string, source: string, spheres?: Array<string> | null } };
+export type SpellByIdQuery = { __typename?: 'Query', spellByID: { __typename?: 'Spell', id: number, level: number, name: string, schools: Array<string>, class: string, verbal: boolean, somatic: boolean, material: boolean, materials: string, range: string, aoe: string, castingTime: string, duration: string, savingThrow: string, damage: string, description: string, source: string, spheres?: Array<string> | null } };
 
 export type SpellbookQueryVariables = Exact<{
   bookId: Scalars['Float']['input'];
 }>;
 
 
-export type SpellbookQuery = { __typename?: 'Query', spellbook: { __typename?: 'SpellBook', maxPages?: number | null, name: string, pagesLeft: number, spellPages?: Array<{ __typename?: 'SpellPage', spell: { __typename?: 'Spell', id: number, level: number, name: string, school: string, class: string, verbal: boolean, somatic: boolean, material: boolean, materials: string, range: string, aoe: string, castingTime: string, duration: string, savingThrow: string, damage: string, source: string, spheres?: Array<string> | null } }> | null } };
+export type SpellbookQuery = { __typename?: 'Query', spellbook: { __typename?: 'SpellBook', maxPages?: number | null, name: string, pagesLeft: number, spellPages?: Array<{ __typename?: 'SpellPage', spell: { __typename?: 'Spell', id: number, level: number, name: string, schools: Array<string>, class: string, verbal: boolean, somatic: boolean, material: boolean, materials: string, range: string, aoe: string, castingTime: string, duration: string, savingThrow: string, damage: string, source: string, spheres?: Array<string> | null } }> | null } };
 
 export type WizardSpellsQueryVariables = Exact<{
   limit: Scalars['Float']['input'];
@@ -484,14 +491,14 @@ export type WizardSpellsQueryVariables = Exact<{
 }>;
 
 
-export type WizardSpellsQuery = { __typename?: 'Query', wizardSpells: { __typename?: 'PaginatedSpells', hasMore: boolean, spells: Array<{ __typename?: 'Spell', id: number, level: number, name: string, school: string, class: string, verbal: boolean, somatic: boolean, material: boolean, materials: string, range: string, aoe: string, castingTime: string, duration: string, savingThrow: string, damage: string, source: string, spheres?: Array<string> | null }> } };
+export type WizardSpellsQuery = { __typename?: 'Query', wizardSpells: { __typename?: 'PaginatedSpells', hasMore: boolean, spells: Array<{ __typename?: 'Spell', id: number, level: number, name: string, schools: Array<string>, class: string, verbal: boolean, somatic: boolean, material: boolean, materials: string, range: string, aoe: string, castingTime: string, duration: string, savingThrow: string, damage: string, source: string, spheres?: Array<string> | null }> } };
 
 export const SpellInfoFragmentDoc = gql`
     fragment SpellInfo on Spell {
   id
   level
   name
-  school
+  schools
   class
   verbal
   somatic
@@ -513,7 +520,7 @@ export const SpellLiteInfoFragmentDoc = gql`
   id
   level
   name
-  school
+  schools
   class
   verbal
   somatic
@@ -607,6 +614,39 @@ export function useCreateCharacterMutation(baseOptions?: Apollo.MutationHookOpti
 export type CreateCharacterMutationHookResult = ReturnType<typeof useCreateCharacterMutation>;
 export type CreateCharacterMutationResult = Apollo.MutationResult<CreateCharacterMutation>;
 export type CreateCharacterMutationOptions = Apollo.BaseMutationOptions<CreateCharacterMutation, CreateCharacterMutationVariables>;
+export const CreateSpellDocument = gql`
+    mutation CreateSpell($spellInfo: SpellInput!) {
+  createSpell(spellInfo: $spellInfo) {
+    ...SpellInfo
+  }
+}
+    ${SpellInfoFragmentDoc}`;
+export type CreateSpellMutationFn = Apollo.MutationFunction<CreateSpellMutation, CreateSpellMutationVariables>;
+
+/**
+ * __useCreateSpellMutation__
+ *
+ * To run a mutation, you first call `useCreateSpellMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCreateSpellMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [createSpellMutation, { data, loading, error }] = useCreateSpellMutation({
+ *   variables: {
+ *      spellInfo: // value for 'spellInfo'
+ *   },
+ * });
+ */
+export function useCreateSpellMutation(baseOptions?: Apollo.MutationHookOptions<CreateSpellMutation, CreateSpellMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<CreateSpellMutation, CreateSpellMutationVariables>(CreateSpellDocument, options);
+      }
+export type CreateSpellMutationHookResult = ReturnType<typeof useCreateSpellMutation>;
+export type CreateSpellMutationResult = Apollo.MutationResult<CreateSpellMutation>;
+export type CreateSpellMutationOptions = Apollo.BaseMutationOptions<CreateSpellMutation, CreateSpellMutationVariables>;
 export const CreateSpellBookDocument = gql`
     mutation CreateSpellBook($maxPages: Float!, $charId: Float!, $name: String!) {
   createSpellBook(maxPages: $maxPages, charId: $charId, name: $name) {

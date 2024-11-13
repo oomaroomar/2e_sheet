@@ -23,6 +23,7 @@ export function somaticBox() {
 
 function CheckBox({name}: CheckBoxProps) {
     const [field] = useField({name, type: "checkbox"})
+    console.log("checkbox render")
   return (
     <div className="inline-flex items-start">
       <label className="flex items-start cursor-pointer relative">

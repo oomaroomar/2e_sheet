@@ -1,0 +1,5 @@
+mutation CreateSpell($spellInfo: SpellInput!) {
+  createSpell(spellInfo: $spellInfo) {
+    ...SpellInfo
+  }
+}

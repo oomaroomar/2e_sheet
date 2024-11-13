@@ -35,8 +35,8 @@ export default function VerboseSpell({spellId}: VerboseSpellProps) {
 
     return <div className="p-4" >
         <WriteSpellModal showModal={showModal} spell={spell} setModalState={() => toggleModal(false)} />
-        <div className={`grid grid-cols-2 gap-y-2 bg-white text-black rounded-xl shadow-md shadow-${spell.school}`} >
-            <div className={`col-span-2 grid grid-cols-11 bg-${spell.school} rounded-t-xl text-xl`}>
+        <div className={`grid grid-cols-2 gap-y-2 bg-white text-black rounded-xl shadow-md shadow-${spell.schools[0]}`} >
+            <div className={`col-span-2 grid grid-cols-11 bg-${spell.schools[0]} rounded-t-xl text-xl`}>
                 <div className="px-4 py-1" ><b>{`${spell.level})`}</b></div>
                 <div className="col-span-7 px-4 py-1" ><b>{spell.name}</b></div>
                 {!charId ? <><div></div><div></div></> : <>
@@ -60,7 +60,7 @@ export default function VerboseSpell({spellId}: VerboseSpellProps) {
              }
             {/* Add scroll bar by adding max-h-80 and overflow-auto */}
             <div className="col-span-2 p-2 px-4 pt-0 text-lg " > <b className="text-lg">Description: </b>{spell.description}</div>
-            <div className="px-4 pt-0 pb-2" > <b>School:</b>  {spell.school}</div>
+            <div className="px-4 pt-0 pb-2" > <b>School:</b>  {spell.schools[0]}</div>
             <div className="px-4 pt-0 pb-2" > <b>Source:</b>  {spell.source}</div>
         </div>
     </div>

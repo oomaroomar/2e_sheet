@@ -3,10 +3,13 @@
 import { materialBox, somaticBox, verbalBox } from "@/components/FormComponents/CheckBox";
 import InputField from "@/components/FormComponents/InputField";
 import SelectField from "@/components/FormComponents/SelectField";
+import { useCreateSpellMutation } from "@/gql/graphql";
 import { schools, spheres } from "@/lib/types";
 import { Formik, Form, Field } from "formik";
 
 export default function Homebrew() {
+  const [createSpell] = useCreateSpellMutation()
+  console.log("in homebrew")
   return (
     <div className="h-screen w-screen flex place-items-center items-center justify-center">
       <Formik
@@ -31,7 +34,23 @@ export default function Homebrew() {
         }}
         onSubmit={async (spellInput, { setStatus }) => {
           console.log("hello")
-          console.log(spellInput);
+          const {customCastingTime, ...rest} = spellInput
+          const spellInfo = {...rest, 
+            level: parseInt(spellInput.level.value), 
+            class: spellInput.class.value, 
+            spheres: spellInput.spheres.length !== 0 ? spellInput.spheres.map(sphere => (sphere as {value: string, label: string}).value) : [],
+            castingTime: spellInput.castingTime.value === "Custom" ? customCastingTime : spellInput.castingTime.value,
+            savingThrow: spellInput.savingThrow.value, 
+            schools: (spellInput.schools.map(sc => (sc as {value: string, label: string}).value))
+          }
+          console.log(spellInfo)
+
+          const response = await createSpell({
+            variables: {
+              spellInfo
+            }
+          })
+          console.log(response)
         }}
       >
         {({ isSubmitting, setFieldValue, values }) => (

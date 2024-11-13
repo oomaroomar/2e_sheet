@@ -2,7 +2,7 @@ fragment SpellInfo on Spell {
     id
     level
     name
-    school
+    schools
     class
     verbal
     somatic

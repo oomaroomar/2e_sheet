@@ -4,7 +4,7 @@ export interface Spell {
     id: number
     level: number;
     name: string,
-    school: string,
+    schools: string[],
     class: string,
     verbal: boolean,
     somatic: boolean,
