@@ -1,6 +1,6 @@
 'use client'
 
-import InputField from "@/components/FormComponents/InputField"
+import {SimpleInputField} from "@/components/FormComponents/InputField"
 import { MeDocument, MeQuery, useLoginMutation } from "@/gql/graphql";
 import { toErrorMap } from "@/lib/utils";
 import { Formik, Form } from "formik"
@@ -35,8 +35,8 @@ export default function Register() {
   }}>
   {({isSubmitting}) => <Form>
     <div className="flex flex-col space-y-6 w-96">
-    <InputField text="Username" bonus="" name="username" type="text"/>
-    <InputField text="Password" bonus="Forgot password?" name="password" type="password"/>
+    <SimpleInputField text="Username" bonus="" name="username" type="text"/>
+    <SimpleInputField text="Password" bonus="Forgot password?" name="password" type="password"/>
     <div className="">
       <button className="text-center text-white w-full rounded-md p-1.5 bg-pink-600 shadow-sm hover:bg-pink-500 
       focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-pink-600" type="submit" disabled={isSubmitting}>
