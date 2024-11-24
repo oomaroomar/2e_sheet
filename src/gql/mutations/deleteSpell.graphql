@@ -1,0 +1,5 @@
+mutation DeleteSpell($deleteSpellId: Float!) {
+  deleteSpell(id: $deleteSpellId) {
+    name
+  }
+}

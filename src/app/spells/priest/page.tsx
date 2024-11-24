@@ -8,7 +8,7 @@ export default function Home() {
   
   const {data, loading} = useClericSpellsQuery({variables: {limit: 254740991, lvlCursor: null, nameCursor: null}})
   
-  return <SpellPage loading={loading} spells={data?.clericSpells.spells}>
+  return <SpellPage castingClass="Cleric" loading={loading} spells={data?.clericSpells.spells}>
     <PriestNavbarContent></PriestNavbarContent>
   </SpellPage>
   

@@ -8,17 +8,27 @@ import {
 import InputField from "@/components/FormComponents/InputField";
 import SelectField from "@/components/FormComponents/SelectField2";
 import DumbSpell from "@/components/Index/DumbSpell";
+import {LoadingGrid } from "@/components/Index/SpellGrid";
 import NavBar from "@/components/NavBar/NavBar2";
-import { useCreateSpellMutation, useMeQuery } from "@/gql/graphql";
+import { useMeQuery, useSpellByIdQuery, useUpdateSpellMutation } from "@/gql/graphql";
 import { schools as allSchools, spheres as allSpheres } from "@/lib/types";
 import { Formik, Form, Field } from "formik";
 
-export default function Homebrew() {
-  const [createSpell] = useCreateSpellMutation();
-  const {data, loading} = useMeQuery()
+interface EditSpellProps {
+    spellId: number
+}
 
-  if(loading) return <div>loading</div>
+export default function EditSpell({spellId}: EditSpellProps) {
+
+  const [createSpell] = useUpdateSpellMutation();
+  const {data, loading} = useMeQuery()
+  const {data: spellFirst, loading: spellLoading} = useSpellByIdQuery({variables: {id: spellId}})
+
+  if(loading || spellLoading || !spellFirst?.spellByID) return <LoadingGrid/>
   if(!data?.me) return <div>please log in to create  a spel</div>
+
+  const {spellByID: spell} = spellFirst
+  const ctIndex = [...Array(10).keys()].findIndex(n => n === parseInt(spell.castingTime))
 
   return (
     <div className="h-scren w-screen">
@@ -26,31 +36,31 @@ export default function Homebrew() {
     <div className="h-screen w-screen flex flex-wrap place-items-center items-center justify-center">
       <Formik
         initialValues={{
-          name: "",
-          materials: "",
-          range: "",
-          aoe: "",
-          duration: "",
-          damage: "",
-          description: "",
-          customCastingTime: "",
-          verbal: false,
-          somatic: false,
-          material: false,
-          level: { value: "1", label: "1" },
-          castingClass: { value: "", label: "" },
-          castingTime: { value: "", label: "" },
-          savingThrow: { value: "", label: "" },
-          spheres: [],
-          schools: [],
+          name: spell.name,
+          materials: spell.materials,
+          range: spell.range,
+          aoe: spell.aoe,
+          duration: spell.duration,
+          damage: spell.damage,
+          description: spell.description,
+          customCastingTime: spell.castingTime,
+          verbal: spell.verbal,
+          somatic: spell.somatic,
+          material: spell.material,
+          castingTime: ctIndex === -1 ? { value: "Custom", label: "Custom" }: { value: spell.castingTime, label: spell.castingTime },
+          level: { value: spell.level.toString(), label: spell.level.toString() },
+          castingClass: { value: spell.class.toString(), label: spell.class.toString() },
+          savingThrow: { value: spell.savingThrow, label: spell.savingThrow },
+          spheres: !!spell.spheres ? spell.spheres.map(sphere => ({value: sphere, label: sphere})) : [],
+          schools: spell.schools.map(sc => ({value: sc, label: sc}))
         }}
-        onSubmit={async (spellInput, { resetForm }) => {
+        onSubmit={async (spellInput, { }) => {
           console.log(spellInput);
-          const { customCastingTime, ...rest } = spellInput;
+          const { customCastingTime, castingClass, ...rest } = spellInput;
           const spellInfo = {
             ...rest,
             level: parseInt(spellInput.level.value),
-            class: spellInput.castingClass.value,
+            class: castingClass.value,
             spheres:
               spellInput.spheres.length !== 0
                 ? spellInput.spheres.map(
@@ -66,17 +76,18 @@ export default function Homebrew() {
             schools: spellInput.schools.map(
               (sc) => (sc as { value: string; label: string }).value
             ),
+            id: spellId
           };
-          console.log(spellInfo);
+          
+          console.log('spellinfo', spellInfo);
 
           const response = await createSpell({
             variables: {
               spellInfo,
             },
           });
-          resetForm();
 
-          console.log(response);
+          console.log('response', response);
         }}
       >
         {({ isSubmitting, setFieldValue, values }) => (
@@ -86,6 +97,7 @@ export default function Homebrew() {
                 <div className="main shit gap-4 flex flex-col w-full md:w-1/2 min-w-48 max-w-96">
                   <InputField
                     updateParent={(s) => setFieldValue("name", s)}
+                    defaultVal={spell.name}
                     text="Name"
                     bonus=""
                     name="name"
@@ -148,6 +160,7 @@ export default function Homebrew() {
 
                   {values.material ? (
                     <InputField
+                    defaultVal={spell.materials}
                       updateParent={(s) => setFieldValue("materials", s)}
                       name="materials"
                       type="text"
@@ -159,6 +172,7 @@ export default function Homebrew() {
                 </div>
                 <div className="flex flex-col gap-4 w-full md:w-1/2 min-w-48 max-w-96">
                   <InputField
+                    defaultVal={spell.aoe}
                     updateParent={(s) => setFieldValue("aoe", s)}
                     name="aoe"
                     type="text"
@@ -177,6 +191,7 @@ export default function Homebrew() {
                   {values.castingTime &&
                   values.castingTime.value === "Custom" ? (
                     <InputField
+                    defaultVal={spell.castingTime}
                       updateParent={(s) => setFieldValue("aoe", s)}
                       name="customCastingTime"
                       type="text"
@@ -187,12 +202,14 @@ export default function Homebrew() {
                   )}
 
                   <InputField
+                    defaultVal={spell.damage}
                     updateParent={(s) => setFieldValue("damage", s)}
                     name="damage"
                     type="text"
                     text="Damage"
                   />
                   <InputField
+                    defaultVal={spell.duration}
                     updateParent={(s) => setFieldValue("duration", s)}
                     name="duration"
                     type="text"
@@ -200,6 +217,7 @@ export default function Homebrew() {
                   />
 
                   <InputField
+                    defaultVal={spell.range}
                     updateParent={(s) => setFieldValue("range", s)}
                     name="range"
                     type="text"
@@ -221,6 +239,7 @@ export default function Homebrew() {
               </div>
               <div className="flex flex-col gap-4 w-full ">
                 <InputField
+                    defaultVal={spell.description}
                   updateParent={(s) => setFieldValue("description", s)}
                   textarea
                   name="description"

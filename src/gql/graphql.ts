@@ -393,6 +393,13 @@ export type CreateSpellBookMutationVariables = Exact<{
 
 export type CreateSpellBookMutation = { __typename?: 'Mutation', createSpellBook: { __typename?: 'SpellBookResponse', errors?: string | null, spellBook?: { __typename?: 'SpellBook', id: number, name: string } | null } };
 
+export type DeleteSpellMutationVariables = Exact<{
+  deleteSpellId: Scalars['Float']['input'];
+}>;
+
+
+export type DeleteSpellMutation = { __typename?: 'Mutation', deleteSpell: { __typename?: 'Spell', name: string } };
+
 export type ForgotPasswordMutationVariables = Exact<{
   email: Scalars['String']['input'];
 }>;
@@ -414,7 +421,7 @@ export type LoginMutationVariables = Exact<{
 }>;
 
 
-export type LoginMutation = { __typename?: 'Mutation', login: { __typename?: 'UserResponse', user?: { __typename?: 'User', username?: string | null, id: number } | null, errors?: Array<{ __typename?: 'FieldError', field: string, message: string }> | null } };
+export type LoginMutation = { __typename?: 'Mutation', login: { __typename?: 'UserResponse', user?: { __typename?: 'User', username?: string | null, id: number, isAdmin: boolean } | null, errors?: Array<{ __typename?: 'FieldError', field: string, message: string }> | null } };
 
 export type LogoutMutationVariables = Exact<{ [key: string]: never; }>;
 
@@ -426,7 +433,14 @@ export type RegisterMutationVariables = Exact<{
 }>;
 
 
-export type RegisterMutation = { __typename?: 'Mutation', register: { __typename?: 'UserResponse', user?: { __typename?: 'User', username?: string | null, id: number } | null, errors?: Array<{ __typename?: 'FieldError', field: string, message: string }> | null } };
+export type RegisterMutation = { __typename?: 'Mutation', register: { __typename?: 'UserResponse', user?: { __typename?: 'User', username?: string | null, id: number, isAdmin: boolean } | null, errors?: Array<{ __typename?: 'FieldError', field: string, message: string }> | null } };
+
+export type UpdateSpellMutationVariables = Exact<{
+  spellInfo: SpellEditInput;
+}>;
+
+
+export type UpdateSpellMutation = { __typename?: 'Mutation', updateSpell: { __typename?: 'SpellEditResponse', error?: string | null, spell?: { __typename?: 'Spell', id: number, level: number, name: string, schools: Array<string>, class: string, verbal: boolean, somatic: boolean, material: boolean, materials: string, range: string, aoe: string, castingTime: string, duration: string, savingThrow: string, damage: string, description: string, source: string, spheres?: Array<string> | null } | null } };
 
 export type WriteSpellMutationVariables = Exact<{
   input: WriteSpellInput;
@@ -463,7 +477,7 @@ export type CharacterQuery = { __typename?: 'Query', character?: { __typename?: 
 export type MeQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type MeQuery = { __typename?: 'Query', me?: { __typename?: 'User', username?: string | null, id: number } | null };
+export type MeQuery = { __typename?: 'Query', me?: { __typename?: 'User', username?: string | null, id: number, isAdmin: boolean } | null };
 
 export type MyCharactersQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -686,6 +700,39 @@ export function useCreateSpellBookMutation(baseOptions?: Apollo.MutationHookOpti
 export type CreateSpellBookMutationHookResult = ReturnType<typeof useCreateSpellBookMutation>;
 export type CreateSpellBookMutationResult = Apollo.MutationResult<CreateSpellBookMutation>;
 export type CreateSpellBookMutationOptions = Apollo.BaseMutationOptions<CreateSpellBookMutation, CreateSpellBookMutationVariables>;
+export const DeleteSpellDocument = gql`
+    mutation DeleteSpell($deleteSpellId: Float!) {
+  deleteSpell(id: $deleteSpellId) {
+    name
+  }
+}
+    `;
+export type DeleteSpellMutationFn = Apollo.MutationFunction<DeleteSpellMutation, DeleteSpellMutationVariables>;
+
+/**
+ * __useDeleteSpellMutation__
+ *
+ * To run a mutation, you first call `useDeleteSpellMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useDeleteSpellMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [deleteSpellMutation, { data, loading, error }] = useDeleteSpellMutation({
+ *   variables: {
+ *      deleteSpellId: // value for 'deleteSpellId'
+ *   },
+ * });
+ */
+export function useDeleteSpellMutation(baseOptions?: Apollo.MutationHookOptions<DeleteSpellMutation, DeleteSpellMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<DeleteSpellMutation, DeleteSpellMutationVariables>(DeleteSpellDocument, options);
+      }
+export type DeleteSpellMutationHookResult = ReturnType<typeof useDeleteSpellMutation>;
+export type DeleteSpellMutationResult = Apollo.MutationResult<DeleteSpellMutation>;
+export type DeleteSpellMutationOptions = Apollo.BaseMutationOptions<DeleteSpellMutation, DeleteSpellMutationVariables>;
 export const ForgotPasswordDocument = gql`
     mutation ForgotPassword($email: String!) {
   forgotPassword(email: $email)
@@ -765,6 +812,7 @@ export const LoginDocument = gql`
     user {
       username
       id
+      isAdmin
     }
     errors {
       field
@@ -836,6 +884,7 @@ export const RegisterDocument = gql`
     user {
       username
       id
+      isAdmin
     }
     errors {
       field
@@ -870,6 +919,42 @@ export function useRegisterMutation(baseOptions?: Apollo.MutationHookOptions<Reg
 export type RegisterMutationHookResult = ReturnType<typeof useRegisterMutation>;
 export type RegisterMutationResult = Apollo.MutationResult<RegisterMutation>;
 export type RegisterMutationOptions = Apollo.BaseMutationOptions<RegisterMutation, RegisterMutationVariables>;
+export const UpdateSpellDocument = gql`
+    mutation UpdateSpell($spellInfo: SpellEditInput!) {
+  updateSpell(spellInfo: $spellInfo) {
+    spell {
+      ...SpellInfo
+    }
+    error
+  }
+}
+    ${SpellInfoFragmentDoc}`;
+export type UpdateSpellMutationFn = Apollo.MutationFunction<UpdateSpellMutation, UpdateSpellMutationVariables>;
+
+/**
+ * __useUpdateSpellMutation__
+ *
+ * To run a mutation, you first call `useUpdateSpellMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUpdateSpellMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [updateSpellMutation, { data, loading, error }] = useUpdateSpellMutation({
+ *   variables: {
+ *      spellInfo: // value for 'spellInfo'
+ *   },
+ * });
+ */
+export function useUpdateSpellMutation(baseOptions?: Apollo.MutationHookOptions<UpdateSpellMutation, UpdateSpellMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<UpdateSpellMutation, UpdateSpellMutationVariables>(UpdateSpellDocument, options);
+      }
+export type UpdateSpellMutationHookResult = ReturnType<typeof useUpdateSpellMutation>;
+export type UpdateSpellMutationResult = Apollo.MutationResult<UpdateSpellMutation>;
+export type UpdateSpellMutationOptions = Apollo.BaseMutationOptions<UpdateSpellMutation, UpdateSpellMutationVariables>;
 export const WriteSpellDocument = gql`
     mutation WriteSpell($input: WriteSpellInput!) {
   writeSpell(input: $input) {
@@ -1045,6 +1130,7 @@ export const MeDocument = gql`
   me {
     username
     id
+    isAdmin
   }
 }
     `;

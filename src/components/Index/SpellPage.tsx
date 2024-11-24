@@ -3,19 +3,25 @@ import SearchModal from "@/components/ModalComponents/SearchModal";
 import SpecModal from "@/components/ModalComponents/SpecModal";
 import SpellDescriptions from "@/components/Index/SpellDescriptionList";
 import SpellGrid, { LoadingGrid } from "@/components/Index/SpellGrid"
-import { schools, SpellLite } from "@/lib/types";
-import { useCallback, useEffect, useState } from "react";
+import { gods, schools, SpellLite } from "@/lib/types";
+import { useCallback, useContext, useEffect, useState } from "react";
+import { UserContext, UserContextType } from "@/context/userContext";
 
 interface SpellPageProps {
     spells: SpellLite[] | undefined
     loading: boolean
     children: React.ReactNode
+    castingClass?: "Cleric" | "Wizard"
 }
 
-export default function SpellPage({spells, loading, children}: SpellPageProps) {
+export default function SpellPage({spells, loading, children, castingClass}: SpellPageProps) {
   const [showSearchModal, setSearchModalState] = useState<boolean>(false)
   const [showSpecModal, setSpecModalState] = useState<boolean>(false)
   
+  const { adminSetter } = useContext(UserContext) as UserContextType
+  console.log(adminSetter)
+  // adminSetter(true)
+
   const handleKeyPress = useCallback((event: KeyboardEvent) => {
     if(event.ctrlKey === true) {
       if(event.key === 'k') {
@@ -33,7 +39,7 @@ export default function SpellPage({spells, loading, children}: SpellPageProps) {
   },[handleKeyPress])
 
   return <div className="flex flex-col h-screen" >
-  <Navbar setSpecModalState={() => setSpecModalState(!showSearchModal)}  setSearchModalState={() => setSearchModalState(!showSearchModal)}>
+  <Navbar castingClass={castingClass} setSpecModalState={() => setSpecModalState(!showSearchModal)}  setSearchModalState={() => setSearchModalState(!showSearchModal)}>
     {children}
   </Navbar>
   <div aria-label="main content" className="flex overflow-hidden h-screen" >
@@ -45,6 +51,6 @@ export default function SpellPage({spells, loading, children}: SpellPageProps) {
     </div>
   </div>
   {(loading || !spells) ? '' :<SearchModal spells={spells} setModalState={(ns: boolean) => setSearchModalState(ns)} showModal={showSearchModal} key={'search'} /> }
-  <SpecModal schools={schools} setModalState={setSpecModalState} showModal={showSpecModal}  />
+  <SpecModal schools={castingClass === "Cleric" ? gods : schools} setModalState={setSpecModalState} showModal={showSpecModal}  />
   </div>
 }

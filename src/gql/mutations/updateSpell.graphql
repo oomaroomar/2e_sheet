@@ -1,0 +1,8 @@
+mutation UpdateSpell($spellInfo: SpellEditInput!) {
+  updateSpell(spellInfo: $spellInfo) {
+    spell {
+      ...SpellInfo
+    }
+    error
+  }
+}

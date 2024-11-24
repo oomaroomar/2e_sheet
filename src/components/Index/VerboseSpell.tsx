@@ -5,6 +5,11 @@ import DocumentPlusIcon from "@/svgs/PlusDocumentIcon"
 import PlusIcon from "@/svgs/PlusIcon"
 import { useContext, useState } from "react"
 import WriteSpellModal from "../ModalComponents/WriteSpellModal"
+import { UserContext, UserContextType } from "@/context/userContext"
+import TrashIcon from "@/svgs/TrashIcon"
+import WrenchIcon from "@/svgs/WrenchIcon"
+import Link from "next/link"
+import DeleteSpellModal from "../ModalComponents/DeleteSpellModal"
 
 interface VerboseSpellProps {
     spellId: number
@@ -15,7 +20,10 @@ export default function VerboseSpell({spellId}: VerboseSpellProps) {
     const {data, loading} = useSpellByIdQuery({variables: {id: spellId}})
     const [learn] = useLearnSpellMutation()
     const {charId} = useContext(CharacterContext) as CharacterContextType
-    const [showModal, toggleModal] = useState(false)
+    const [writeSpellModal, toggleWSModal] = useState(false)
+    const [deleteSpellModal, toggleDSModal] = useState(false)
+
+    const { isAdmin } = useContext(UserContext) as UserContextType
 
     async function learnSpell() {
         if(charId === null) return
@@ -34,16 +42,26 @@ export default function VerboseSpell({spellId}: VerboseSpellProps) {
     const spell = data?.spellByID as Spell
 
     return <div className="p-4" >
-        <WriteSpellModal showModal={showModal} spell={spell} setModalState={() => toggleModal(false)} />
+        <WriteSpellModal showModal={writeSpellModal} spell={spell} setModalState={() => toggleWSModal(false)} />
+        <DeleteSpellModal showModal={deleteSpellModal} spell={spell} setModalState={() => toggleDSModal(false)} />
         <div className={`grid grid-cols-2 gap-y-2 bg-white text-black rounded-xl shadow-md shadow-${spell.schools[0]}`} >
-            <div className={`col-span-2 grid grid-cols-11 bg-${spell.schools[0]} rounded-t-xl text-xl`}>
-                <div className="px-4 py-1" ><b>{`${spell.level})`}</b></div>
-                <div className="col-span-7 px-4 py-1" ><b>{spell.name}</b></div>
-                {!charId ? <><div></div><div></div></> : <>
-                <div onClick={() => toggleModal(true)} className="px-4 py-1 flex place-items-center justify-center hover:cursor-pointer" >{(spell.class === 'Wizard' && charId !== null) ? <DocumentPlusIcon h={"24px"}/> : ''}</div>
+            <div className={`col-span-2 flex justify-end bg-${spell.schools[0]} rounded-t-xl text-xl`}>
+                <div className="col-span-5 flex px-4 py-1 mr-auto" ><b>{`${spell.level})`}</b><b className="pl-4">{spell.name}</b>
+                 {isAdmin ? <>
+                 <Link href={`/spells/edit/${spell.id}`}>
+                <div className="pl-4 py-1 flex place-items-center justify-center hover:cursor-pointer" ><WrenchIcon h={"24px"}/> </div>
+                 </Link>
+                <div onClick={() => toggleDSModal(true)} className="pl-4 py-1 flex place-items-center justify-center hover:cursor-pointer" ><TrashIcon h={"24px"}/></div>
+                </> 
+                : ''}
+                </div>
+                <div className="da-buttons flex">
+                {!charId ? '' : <>
+                <div onClick={() => toggleWSModal(true)} className="px-4 py-1 flex place-items-center justify-center hover:cursor-pointer" >{(spell.class === 'Wizard' && charId !== null) ? <DocumentPlusIcon h={"24px"}/> : ''}</div>
                 <div onClick={learnSpell} className="px-4 py-1 flex place-items-center justify-center hover:cursor-pointer" >{(spell.class === 'Wizard' && charId !== null) ? <PlusIcon h={"24px"}/> : ''}</div>
                 </>}
-                <div className="px-4 py-1" ><b>{spell.class === 'Cleric' ? 'C' : 'W'}</b></div>
+                </div>
+               <div className="px-8 py-1" ><b>{spell.class === 'Cleric' ? 'C' : 'W'}</b></div>
             </div>
             <div className="col-span-2 px-4" > <b>{spell.somatic ? 'S ' : ''} {spell.verbal ? 'V ' : ''}{spell.material ? 'M: ' : ''}</b>{spell.materials}</div>
             <div className="px-4" > <b>Damage:</b> {spell.damage}</div>

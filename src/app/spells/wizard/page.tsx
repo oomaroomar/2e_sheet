@@ -15,7 +15,7 @@ export default function Home() {
   const {data: charData, loading: charLoading} = useMyCharactersQuery()
   const {charId} = useContext(CharacterContext) as CharacterContextType
 
-  return <SpellPage loading={loading} spells={limitSpells ? charData?.myCharacters
+  return <SpellPage castingClass="Wizard" loading={loading} spells={limitSpells ? charData?.myCharacters
     ?.find(char => char.id === charId)?.learnedSpells.map(ls => ls.spell)
   : data?.wizardSpells.spells}> 
     <WizardNavbarContent limit={limitSpells} toggleLimit={() => setLimitSpells(!limitSpells)} currentChar={charData?.myCharacters?.find(char => char.id === charId)?.name} viewCharacters={() => flipModal(true)} />

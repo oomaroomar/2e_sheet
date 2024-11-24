@@ -1,15 +1,19 @@
 'use client'
 
 import {SimpleInputField} from "@/components/FormComponents/InputField"
+import { UserContext, UserContextType } from "@/context/userContext";
 import { MeDocument, MeQuery, useLoginMutation } from "@/gql/graphql";
 import { toErrorMap } from "@/lib/utils";
 import { Formik, Form } from "formik"
 import { useRouter } from "next/navigation";
+import { useContext } from "react";
 
 export default function Register() {
 
   const router = useRouter();
   const [login] = useLoginMutation();
+
+  const {adminSetter} = useContext(UserContext) as UserContextType
 
   return <div className="h-screen w-screen flex place-items-center items-center justify-center">
   <Formik initialValues={{username: '', password: ''}} 
@@ -29,7 +33,10 @@ export default function Register() {
     if(response.data?.login.errors) {
       console.log('ARASRA')
       setStatus(toErrorMap(response.data.login.errors))
+    } else if(!response.data?.login.user) {
+      console.log("something went wrong")
     } else {
+      adminSetter(response.data.login.user.isAdmin)
       router.push('/')
     }
   }}>

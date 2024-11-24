@@ -14,18 +14,20 @@ import FilterButtonWithSpecialNeeds from "./FilterButtonWithSpecialNeeds";
 import Burger from "@/svgs/Burger";
 import LeftMenu from "./LeftMenu";
 import FilterIcon from "@/svgs/FilterIcon";
-import NavBarBtn from "./NavBarBtn";
+import {BorderedNavBarBtn, NavBarBtn} from "./NavBarBtn";
 
 interface NavBarProps {
   setSearchModalState: () => void;
   setSpecModalState: () => void;
   children: React.ReactNode;
+  castingClass?: "Cleric" | "Wizard"
 }
 
 export default function Navbar({
   setSearchModalState,
   setSpecModalState,
   children,
+  castingClass
 }: NavBarProps) {
   const filters = useContext(FilterContext) as FilterContextType;
 
@@ -57,26 +59,29 @@ export default function Navbar({
     <>
       <div
         ref={ref}
-        className={`${showLeftMenu ? "" : "-translate-x-64 opacity-0"} transition-all absolute h-screen w-64 bg-white opacity-100 text-xl shadow-lg gap-4`}
+        className={`${showLeftMenu ? "" : "-translate-x-64 opacity-0"} z-50 transition-all absolute h-screen w-64 bg-white opacity-95 text-xl shadow-lg gap-4`}
       >
         <LeftMenu />
       </div>{" "}
-      <div className="hidden py-1 z-40 w-full lg:block">
+      <div className="hidden py-2 z-40 w-full lg:block">
         <div
-          className={`w-full flex flex-row gap-2 ${showFilters ? "" : "border-b"} border-pink-600/40 p-2`}
+// border-pink-600/40 p-2
+          className={`w-full flex flex-row gap-2 ${showFilters ? "" : ""} `}
         >
           <div
             onClick={() => toggleLeftMenu(!showLeftMenu)}
-            className="flex place-items-center justify-center hover:cursor-pointer"
+            className="flex pl-3 place-items-center justify-center hover:cursor-pointer"
           >
             <Burger h="24px" />
           </div>
-          <NavBarBtn
+          <BorderedNavBarBtn
             text="Quick search..."
             text2="Ctrl + K"
             onClick={setSearchModalState}
           />
-          <NavBarBtn text="Specializations" onClick={setSpecModalState} />
+          {!castingClass ? '' : <NavBarBtn text={castingClass === 'Cleric' ? 'Diety' : 'Specialization'} onClick={setSpecModalState} />
+          }
+          
           {children}
           <button
             onClick={() => setShowFilters(!showFilters)}

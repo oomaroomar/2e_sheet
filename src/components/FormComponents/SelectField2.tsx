@@ -22,7 +22,7 @@ interface SelectFieldProps {
     class: {value: string, label: string};
     castingTime:  {value: string, label: string};
     savingThrow: {value: string, label: string};
-    spheres: never[];
+    spheres: {value: string, label: string}[];
   }>>;
   field: string
   fieldName?: string

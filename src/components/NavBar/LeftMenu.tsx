@@ -14,14 +14,14 @@ return <li>
 }
 
 function Section({children}: Readonly<{children: React.ReactNode;}>) {
-    return <ul className="pt-4 mt-4 space-y-2 font-medium border-t opacity-100 border-pink-400">
+    return <ul className="pt-4 mt-4 space-y-2 font-medium border-t border-pink-400">
         {children}
     </ul>
 }
 
 export default function LeftMenu() {
-    return <div>
-    <ul className="space-y-2 font-medium transition-transform pt-14">
+    return <div className="pt-8">
+    <ul className="space-y-2 font-medium transition-transform">
           <LeftmenuItem href="/" text="Home" />
           <LeftmenuItem href="/spells" text="All spells" />
           <LeftmenuItem href="/spells/priest" text="Cleric spells" />

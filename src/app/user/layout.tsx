@@ -1,5 +1,6 @@
 "use client"
 
+import { UserProvider } from "@/context/userContext";
 import { apolloClient } from "@/lib/apolloClient";
 import { ApolloProvider } from "@apollo/client";
 
@@ -12,9 +13,11 @@ export default function SpellsLayout({
 
   return (
   <ApolloProvider client={apolloClient}>
+    <UserProvider>
     <div className="h-screen overflow-hidden">
       {children}
     </div>
+  </UserProvider>
   </ApolloProvider>
   );
 }

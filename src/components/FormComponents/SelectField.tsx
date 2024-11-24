@@ -5,25 +5,6 @@ import Select, { MultiValue } from 'react-select'
 interface SelectFieldProps {
   options: {value: string, label: string}[]
   isMulti?: boolean
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  // setFieldValue: (field: string, value: any, shouldValidate?: boolean) => Promise<void | FormikErrors<{
-  //   name: string;
-  //   level: {value: string, label: string};
-  //   schools: {value: string, label: string}[];
-  //   class: {value: string, label: string};
-  //   verbal: boolean;
-  //   somatic: boolean;
-  //   material: boolean;
-  //   materials: string;
-  //   range: string;
-  //   aoe: string;
-  //   castingTime:  {value: string, label: string};
-  //   duration: string;
-  //   savingThrow: {value: string, label: string};
-  //   damage: string;
-  //   description: string;
-  //   spheres: never[];
-  // }>>;
   field: string
   fieldName?: string
   updateParent?: (val: { value: string; label: string; }) => void
@@ -36,8 +17,6 @@ export default function SelectField({fieldName, options, isMulti = false, field,
   const [isMounted, setMounted] = useState(false)
   const [value, setValue] = useState<{ value: string; label: string; } | MultiValue<{ value: string; label: string; }>>()
   useEffect(() => setMounted(true), [setMounted])
-
-  console.log("rerendering select field")
 
   function done() {
     if(!value) return

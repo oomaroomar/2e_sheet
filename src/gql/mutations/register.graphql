@@ -3,6 +3,7 @@ mutation Register($options: UsernamePasswordInput!) {
     user {
      username
      id
+     isAdmin
     }
     errors {
       field
